@@ -23,6 +23,7 @@ A logger for MythicMC shops to an excel file.
 ## Authors
 
 - [@Vox314](https://www.github.com/Vox314)
+- [@32294](https://www.github.com/32294)
 
 
 ## License
