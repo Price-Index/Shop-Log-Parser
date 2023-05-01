@@ -1,5 +1,9 @@
-import os, json
+import os, json, datetime
 from openpyxl import Workbook
+
+# Get the characters used as decimal and thousands separators on the user's machine
+decimal_separator = '.'
+thousands_separator = ','
 
 #? Install colorful comments extention in VSC to see colored comments
 
@@ -7,7 +11,7 @@ from openpyxl import Workbook
 # minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
 # latest_log = os.path.join(minecraft_dir, 'latest.log')
 
-#! local path bc i'm to lazy to code linux support corrently
+#! local path bc I'm to lazy to code linux support correctly
 latest_log = "./latest.log"
 
 #^ Create a new workbook and select the active worksheet
@@ -26,7 +30,7 @@ dict_pages = ['enchanted_books.json'] # dictionary pages (you can add more in th
 index_dictionary = {}
 
 for file_name in dict_pages:
-    with open(file_name, 'r') as file:
+    with open(f"./dictionary/{file_name}", 'r') as file:
         data = json.load(file)
         index_dictionary.update(data)
 
@@ -46,21 +50,31 @@ with open(latest_log, 'r') as file:
             # stock = line.split('Stock: ')[1].split('\\n')[0]
 
             #* get item name
-            item = line.split('Item: ')[1].split('\\n')[0]
+            item = line.split('Item: ')[1].split('\n')[0]
 
-            #~ Compare item name against dictionary to see if item name should be changed to something more readable
+            #~ Look if the item name starts with Enchanted Book, if yes make it an enchantment, if yes but no, then unknown, if no; then just pass by.
             #~ (For potions, enchanted books, and music discs.)
-            if item in index_dictionary.keys:
-                item = index_dictionary[item]
-            
+            if item.startswith('Enchanted Book#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'Unknown Enchanted Book'
+
             #* get buy price
             if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
                 if '[CHAT] Buy' in lines[i + 1]:
                     buy_line = lines[i + 1]
                 else:
                     buy_line = lines[i + 2]
-                amount_buy = float(buy_line.split('Buy ')[1].split(' for')[0])
-                price_buy = float(buy_line.split('for ')[1])
+                
+                # Remove the thousands separator from the strings
+                amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
+                amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
+                amount_buy = float(amount_buy_string)
+
+                price_buy_string = buy_line.split('for ')[1]
+                price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
+                price_buy = float(price_buy_string)
                 buy = price_buy / amount_buy
 
             #* get sell price
@@ -69,8 +83,15 @@ with open(latest_log, 'r') as file:
                     sell_line = lines[i + 1]
                 else:
                     sell_line = lines[i + 2]
-                amount_sell = float(sell_line.split('Sell ')[1].split(' for')[0])
-                price_sell = float(sell_line.split('for ')[1])
+
+                # Remove the thousands separator from the strings
+                amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
+                amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
+                amount_sell = float(amount_sell_string)
+
+                price_sell_string = sell_line.split('for ')[1]
+                price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
+                price_sell = float(price_sell_string)
                 sell = price_sell / amount_sell
 
             #* add row to excel workbook if all data is present
@@ -79,4 +100,7 @@ with open(latest_log, 'r') as file:
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
 #^ Save the workbook to a file
-wb.save('shopdata.xlsx')
+time = datetime.datetime.now().time().strftime('%H-%M-%S')
+date = datetime.datetime.now().date()
+wb.save(f'./exports/{date}-at-{time}-shopdata.xlsx')
+wb.save('./exports/latest-shopdata.xlsx')
