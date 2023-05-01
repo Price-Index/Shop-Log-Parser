@@ -1,4 +1,4 @@
-import os
+import os, json
 from openpyxl import Workbook
 
 #? Install colorful comments extention in VSC to see colored comments
@@ -20,11 +20,18 @@ ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
 #^ create vars for later
 #* shop info var for loop
 shop_info = []
-#* dictionary for matching item names to more readable ones
-index_dictionary = {'Enchanted Book#Oe':'Efficiency 4', 'Enchanted Book#3K':'Efficiency 3','Enchanted Book#i':'Fortune 3','Enchanted Book#3A':'Fortune 2','Enchanted Book#j':'Silk Touch','Enchanted Book#g':'Unbreaking 3','Enchanted Book#2q':'Protection 4','Enchanted Book#z':'Protection 3','Enchanted Book#2s':'Fire Protection 4','Enchanted Book#2t':'Blast Protection 4','Enchanted Book#2u':'Projectile Projection 4','Enchanted Book#E':'Thorns 2','Enchanted Book#C':'Respiration 3','Enchanted Book#D':'Aqua Affinity','Enchanted Book#B':'Depth Strider 3','Enchanted Book#A':'Feather Falling 4','Enchanted Book#u':'Looting 3','Enchanted Book#y':'Looting 2','Enchanted Book#q':'Sharpness 4','Enchanted Book#r':'Sharpness 3','Enchanted Book#t':'Sweeping Edge 3','Enchanted Book#v':'Fire Aspect 2','Enchanted Book#s':'Smite 4','Enchanted Book#x':'Bane Of Arthropods 4','Enchanted Book#w':'Knockback 2','Enchanted Book#m':'Power 4','Enchanted Book#3l':'Power 3','Enchanted Book#n':'Punch 2','Enchanted Book#o':'Flame','Enchanted Book#p':'Infinity','Enchanted Book#wi':'Piercing 4','Enchanted Book#vN':'Multishot','Enchanted Book#yb':'Quick Charge 2','Enchanted Book#27':'Impaling 5','Enchanted Book#28':'Impaling 4','Enchanted Book#29':'Channeling','Enchanted Book#2a':'Loyalty 3','Enchanted Book#2b':'Riptide 3','Enchanted Book#k':'Luck Of The Sea 3','Enchanted Book#3B':'Luck Of The Sea 2','Enchanted Book#l':'Lure 3','Enchanted Book#3k':'Lure 2','Enchanted Book#2w':'Frost Walker','Enchanted Book#PU':'Curse Of Binding','Enchanted Book#PV':'Curse Of Vanishing','Enchanted Book#2O':'Mending'}
+
+# Dictionary used to translate for humans
+dict_pages = ['enchanted_books.json'] # dictionary pages (you can add more in the future)
+index_dictionary = {}
+
+for file_name in dict_pages:
+    with open(file_name, 'r') as file:
+        data = json.load(file)
+        index_dictionary.update(data)
 
 #^ Read the chat log from the file
-with open(latest_log, "r") as file:
+with open(latest_log, 'r') as file:
     lines = file.readlines()
     buy = sell = None
     
@@ -41,7 +48,7 @@ with open(latest_log, "r") as file:
             #* get item name
             item = line.split('Item: ')[1].split('\\n')[0]
 
-            #~ Compare item name agaisnt dictionary to see if item name should be changed to something more readable
+            #~ Compare item name against dictionary to see if item name should be changed to something more readable
             #~ (For potions, enchanted books, and music discs.)
             if item in index_dictionary.keys:
                 item = index_dictionary[item]
