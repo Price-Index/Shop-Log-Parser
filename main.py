@@ -1,10 +1,6 @@
 import os, json, datetime
 from openpyxl import Workbook
 
-# Get the characters used as decimal and thousands separators on the user's machine
-decimal_separator = '.'
-thousands_separator = ','
-
 #? Install colorful comments extention in VSC to see colored comments
 
 #TODO uncomment for windows and not multimc
@@ -21,12 +17,16 @@ ws = wb.active
 #^ Set the column headers
 ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
 
+#^ Get the characters used as decimal and thousands separators on the user's machine
+decimal_separator = '.'
+thousands_separator = ','
+
 #^ create vars for later
 #* shop info var for loop
 shop_info = []
 
-# Dictionary used to translate for humans
-dict_pages = ['enchanted_books.json'] # dictionary pages (you can add more in the future)
+#* Dictionary used to translate for humans
+dict_pages = ['enchanted_books.json','potions.json','discs.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
 for file_name in dict_pages:
@@ -59,7 +59,7 @@ try:
                 try:
                     item = index_dictionary[item]
                 except KeyError:
-                    item = 'Unknown Enchanted Book'
+                    item = 'ERROR: Unknown item - ' + item
 
             #* get buy price
             if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
