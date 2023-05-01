@@ -8,7 +8,7 @@ from openpyxl import Workbook
 #latest_log = os.path.join(minecraft_dir, 'latest.log')
 
 #! local path bc I'm to lazy to code linux support correctly
-latest_log = "./latest.log"
+latest_log = "./parsefiles/latest.log"
 
 #^ Create a new workbook and select the active worksheet
 wb = Workbook()
