@@ -26,7 +26,7 @@ thousands_separator = ','
 shop_info = []
 
 #* Dictionary used to translate for humans
-dict_pages = ['enchanted_books.json','potions.json','Heads.json'] # dictionary pages (you can add more in the future)
+dict_pages = ['enchanted_books.json','potions.json','heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
 for file_name in dict_pages:
@@ -59,7 +59,7 @@ try:
                 try:
                     item = index_dictionary[item]
                 except KeyError:
-                    item = 'ERROR Unknown Enchnated Book: ' + item
+                    item = 'ERROR Unknown Enchanted Book: ' + item
             
             if item.startswith('Potion#'):
                 try:
@@ -72,6 +72,15 @@ try:
                     item = index_dictionary[item]
                 except KeyError:
                     item = 'ERROR Unknown Head: ' + item
+
+            # makes it so that if theres any item containing # which did not get catched above,
+            # it still puts it in the .xlsx file,
+            # marked as an Unknown Item.
+            elif '#' in item:
+                try:
+                    item = item.split('#')[0]
+                except KeyError:
+                    item = 'ERROR Unknown Item: ' + item
 
             #* get buy price
             if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
