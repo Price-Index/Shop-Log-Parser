@@ -35,9 +35,10 @@ for file_name in dict_pages:
         index_dictionary.update(data)
 
 #^ Read the chat log from the file
-with open(latest_log, 'r') as file:
-    lines = file.readlines()
-    buy = sell = None
+try:
+    with open(latest_log, 'r') as file:
+        lines = file.readlines()
+        buy = sell = None
     
     #^ runs when fines the correct shop info header
     for i, line in enumerate(lines):
@@ -99,8 +100,11 @@ with open(latest_log, 'r') as file:
                 ws.append([item, owner, buy, sell])
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
-#^ Save the workbook to a file
-time = datetime.datetime.now().time().strftime('%H-%M-%S')
-date = datetime.datetime.now().date()
-wb.save(f'./exports/{date}-at-{time}-shopdata.xlsx')
-wb.save('./exports/latest-shopdata.xlsx')
+    #^ Save the workbook to a file
+    time = datetime.datetime.now().time().strftime('%H-%M-%S')
+    date = datetime.datetime.now().date()
+    wb.save(f'./exports/{date}-at-{time}-shopdata.xlsx')
+    wb.save('./exports/latest-shopdata.xlsx')
+
+except FileNotFoundError:
+    print(f"{latest_log} could not be found.")

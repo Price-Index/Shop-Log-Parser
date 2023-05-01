@@ -17,7 +17,7 @@ A logger for MythicMC shops to an excel file.
 - Make sure you've joined [MythicMC](https://mythicmc.org)
 - Go to any shop and right click the **chest** of a chestshop
 - Run the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
-- Open the new shopdata.xlsx file which contains the data. 
+- Open the new ``./exports/latest-shopdata.xlsx`` file which contains the data. 
 
 ## Additional information
 The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.
