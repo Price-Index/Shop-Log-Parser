@@ -19,6 +19,9 @@ A logger for MythicMC shops to an excel file.
 - Run the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
 - Open the new shopdata.xlsx file which contains the data. 
 
+## Additional information
+The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.
+The dictionary was only made for Non-anvilled items as those are the only items actually worth something.
 
 ## Authors
 
