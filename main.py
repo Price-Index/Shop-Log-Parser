@@ -73,15 +73,6 @@ try:
                 except KeyError:
                     item = 'ERROR Unknown Head: ' + item
 
-            # makes it so that if theres any item containing # which did not get catched above,
-            # it still puts it in the .xlsx file,
-            # marked as an Unknown Item.
-            elif '#' in item:
-                try:
-                    item = item.split('#')[0]
-                except KeyError:
-                    item = 'ERROR Unknown Item: ' + item
-
             #* get buy price
             if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
                 if '[CHAT] Buy' in lines[i + 1]:
