@@ -26,7 +26,7 @@ thousands_separator = ','
 shop_info = []
 
 #* Dictionary used to translate for humans
-dict_pages = ['enchanted_books.json','potions.json'] # dictionary pages (you can add more in the future)
+dict_pages = ['enchanted_books.json','potions.json','Heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
 for file_name in dict_pages:
@@ -59,7 +59,19 @@ try:
                 try:
                     item = index_dictionary[item]
                 except KeyError:
-                    item = 'ERROR: Unknown item - ' + item
+                    item = 'ERROR Unknown Enchnated Book: ' + item
+            
+            if item.startswith('Potion#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'ERROR Unknown Potion: ' + item
+            
+            if item.startswith('Player Head#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'ERROR Unknown Head: ' + item
 
             #* get buy price
             if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
