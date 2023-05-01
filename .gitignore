@@ -1,0 +1,4 @@
+### All files, directories or file extensions that should not be copied from development to production. ###
+
+*.log
+*.xlsx
