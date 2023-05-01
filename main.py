@@ -26,7 +26,7 @@ thousands_separator = ','
 shop_info = []
 
 #* Dictionary used to translate for humans
-dict_pages = ['enchanted_books.json','potions.json','discs.json'] # dictionary pages (you can add more in the future)
+dict_pages = ['enchanted_books.json','potions.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
 for file_name in dict_pages:
