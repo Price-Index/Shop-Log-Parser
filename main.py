@@ -4,11 +4,11 @@ from openpyxl import Workbook
 #? Install colorful comments extention in VSC to see colored comments
 
 #TODO uncomment for windows and not multimc
-#minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
-#latest_log = os.path.join(minecraft_dir, 'latest.log')
+minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
+latest_log = os.path.join(minecraft_dir, 'latest.log')
 
 #! local path bc I'm to lazy to code linux support correctly
-latest_log = "./parsefiles/latest.log"
+#latest_log = "./parsefiles/latest.log"
 
 #^ Create a new workbook and select the active worksheet
 wb = Workbook()
