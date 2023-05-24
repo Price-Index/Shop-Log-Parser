@@ -1,8 +1,6 @@
-
 # MythicMC shoplogger
 
 A logger for MythicMC shops to an excel file.
-
 
 ## Requirements
 
@@ -23,11 +21,21 @@ A logger for MythicMC shops to an excel file.
 The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.
 The dictionary was only made for Non-anvilled items as those are the only items actually worth something.
 
+## How does it work (in a nutshell)?
+So for those of you who would like to know how exactly this thing works; let me give you the grand tour-\
+Everytime you boot Minecraft, the game makes a ``latest.log file`` under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\
+This ``latest.log file`` file stores all game data booting information, even chat data.\
+So once you execute the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file, it will basically
+read trough all of the latest.log file lines and search for lines containing: ``[CHAT] Shop Information:`` as a key-string
+to identify where relevant ShopInformation is shown. It then takes the Data it finds under that key-string and stores it in an
+excel file, which is made under ``./exports/``.
+
+So yeah nothing too complicated to be fair :P
+
 ## Authors
 
 - [@Vox314](https://www.github.com/Vox314)
 - [@32294](https://www.github.com/32294)
-
 
 ## License
 This project is licensed under the terms of the [MIT](https://choosealicense.com/licenses/mit/) license.
@@ -55,3 +63,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
