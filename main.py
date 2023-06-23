@@ -3,29 +3,34 @@ from openpyxl import Workbook
 
 #? Install colorful comments extention in VSC to see colored comments
 
-#TODO uncomment for windows and not multimc
-minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
+# Determine the Minecraft directory based on the user's operating system
+if os.name == 'nt':  # Windows
+    minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
+elif os.name == 'posix':  # macOS and Linux
+    home_dir = os.path.expanduser('~')
+    if os.uname()[0] == 'Darwin':  # macOS
+        minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'logs')
+    else:  # Linux
+        minecraft_dir = os.path.join(home_dir, '.minecraft', 'logs')
+
 latest_log = os.path.join(minecraft_dir, 'latest.log')
 
-#! local path bc I'm to lazy to code linux support correctly
-#latest_log = "./parsefiles/latest.log"
-
-#^ Create a new workbook and select the active worksheet
+# Create a new workbook and select the active worksheet
 wb = Workbook()
 ws = wb.active
 
-#^ Set the column headers
+# Set the column headers
 ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
 
-#^ Get the characters used as decimal and thousands separators on the user's machine
+# Get the characters used as decimal and thousands separators on the user's machine
 decimal_separator = '.'
 thousands_separator = ','
 
-#^ create vars for later
-#* shop info var for loop
+# Create vars for later
+# Shop info var for loop
 shop_info = []
 
-#* Dictionary used to translate for humans
+# Dictionary used to translate for humans
 dict_pages = ['enchanted_books.json','potions.json','heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
