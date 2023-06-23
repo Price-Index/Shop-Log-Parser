@@ -5,11 +5,13 @@ A logger for MythicMC shops to an excel file.
 ## Requirements
 
 - [Python 3.10](https://www.python.org/downloads/release/python-3100/)
-- [Windows OS](https://www.microsoft.com/en-us/software-download/)
 
 ```
   pip install openpyxl
 ```
+
+## Compatibility
+- [Microsoft Windows](https://www.microsoft.com/en-us/software-download/), [MacOS](https://www.apple.com/macos) & [Linux](https://www.linux.org/pages/download/)
 
 ## How to use
 - Make sure you've joined [MythicMC](https://mythicmc.org)
@@ -63,4 +65,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-

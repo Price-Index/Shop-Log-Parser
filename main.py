@@ -1,3 +1,10 @@
+"""
+## MythicMC-Shoplogger
+
+Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \ 
+MIT, see LICENSE for more details.
+"""
+
 import os, json, datetime
 from openpyxl import Workbook
 
