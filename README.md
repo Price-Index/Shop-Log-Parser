@@ -12,7 +12,8 @@ A logger for MythicMC shops to an excel file.
 
 ## Compatibility
 - [Microsoft Windows](https://www.microsoft.com/en-us/software-download/), [MacOS](https://www.apple.com/macos) & [Linux](https://www.linux.org/pages/download/)
-### Note MacOS and Linux support have not been tested but should work *in theory*, please provide Feedback.
+### MacOS and Linux support have not been tested!
+### They should work __*in theory*__, please provide Feedback.
 
 ## How to use
 - Make sure you've joined [MythicMC](https://mythicmc.org)
