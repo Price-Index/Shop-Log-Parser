@@ -5,22 +5,40 @@ Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com
 MIT, see LICENSE for more details.
 """
 
-import os, json, datetime
+import os, json, datetime, argparse, time
 from openpyxl import Workbook
+
+start_time = time.time()
 
 #? Install colorful comments extention in VSC to see colored comments
 
 # Determine the Minecraft directory based on the user's operating system
-if os.name == 'nt':  # Windows
-    minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
-elif os.name == 'posix':  # macOS and Linux
-    home_dir = os.path.expanduser('~')
-    if os.uname()[0] == 'Darwin':  # macOS
-        minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'logs')
-    else:  # Linux
-        minecraft_dir = os.path.join(home_dir, '.minecraft', 'logs')
+def file_path(string):
+    if os.path.isfile(string):
+        return string
+    else:
+        raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
 
-latest_log = os.path.join(minecraft_dir, 'latest.log')
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawTextHelpFormatter,
+    description=f'MythicMC shoplogger\nA logger for MythicMC shops to an excel file.'
+    )
+parser.add_argument('--path', type=file_path, help='Path to the latest.log file of the Minecraft directory')
+args = parser.parse_args()
+
+if args.path:
+    latest_log = args.path
+else:
+    if os.name == 'nt':  # Windows
+        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
+    elif os.name == 'posix':  # macOS and Linux
+        home_dir = os.path.expanduser('~')
+        if os.uname()[0] == 'Darwin':  # macOS
+            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'logs')
+        else:  # Linux
+            minecraft_dir = os.path.join(home_dir, '.minecraft', 'logs')
+
+    latest_log = os.path.join(minecraft_dir, 'latest.log')
 
 # Create a new workbook and select the active worksheet
 wb = Workbook()
@@ -125,10 +143,14 @@ try:
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
     #^ Save the workbook to a file
-    time = datetime.datetime.now().time().strftime('%H-%M-%S')
+    customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
     date = datetime.datetime.now().date()
-    wb.save(f'./exports/{date}-at-{time}-shopdata.xlsx')
+    wb.save(f'./exports/{date}-at-{customtime}-shopdata.xlsx')
     wb.save('./exports/latest-shopdata.xlsx')
+
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"Done! {elapsed_time:.2f}ms")
 
 except FileNotFoundError:
     print(f"{latest_log} could not be found.")
