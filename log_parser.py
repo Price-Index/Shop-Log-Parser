@@ -149,7 +149,7 @@ index_dictionary = {}
 
 
 for file_name in dict_pages:
-    with open(f"./dictionary/log_parser/{file_name}", 'r') as file:
+    with open(f"./resources/log_parser/{file_name}", 'r') as file:
         data = json.load(file)
         index_dictionary.update(data)
 
