@@ -63,12 +63,12 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 args = parser.parse_args()
 
 # Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache/log_parser')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
 # Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports/log_parser')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
