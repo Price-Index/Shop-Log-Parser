@@ -5,12 +5,13 @@ Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com
 MIT, see LICENSE for more details.
 """
 
+# import neccessary libraries
+# please install openpyxl using "pip3.10 install openpyxl"
 import os, json, datetime, argparse, time
 from openpyxl import Workbook
 
+# set a var to compare to later to find how long the script took
 start_time = time.time()
-
-#? Install colorful comments extention in VSC to see colored comments
 
 # Determine the Minecraft directory based on the user's operating system
 def file_path(string):
@@ -19,13 +20,19 @@ def file_path(string):
     else:
         raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
 
+# Arguments for the command
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawTextHelpFormatter,
     description=f'MythicMC shoplogger\nA logger for MythicMC shops to an excel file.'
     )
+
+# `--path` argument to specify the file 
 parser.add_argument('--path', type=file_path, help='Path to the latest.log file of the Minecraft directory')
+
+# get the arguments given to the command
 args = parser.parse_args()
 
+# test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
     latest_log = args.path
 else:
@@ -51,13 +58,13 @@ ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
 decimal_separator = '.'
 thousands_separator = ','
 
-# Create vars for later
 # Shop info var for loop
 shop_info = []
 
-# Dictionary used to translate for humans
+# Dictionary #?? ids into human readable names
 dict_pages = ['enchanted_books.json','potions.json','heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
+
 
 for file_name in dict_pages:
     with open(f"./dictionary/{file_name}", 'r') as file:
@@ -103,7 +110,7 @@ try:
                 except KeyError:
                     item = 'ERROR Unknown Head: ' + item
 
-            #* get buy price
+            #* get buy price, loops until it finds the line it's on 
             buy_line = None
             for j in range(i + 1, min(i + 2001, len(lines))):
                 if '[CHAT] Shop Information:' in lines[j]:
@@ -113,18 +120,27 @@ try:
                     buy_line = lines[j]
                     break
 
+            # if the line was found, process it
             if buy_line:
-                # Remove the thousands separator from the strings
+
+                # Split and remove the thousands separator from the strings
                 amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
                 amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
+
+                # set the item count of the shop
                 amount_buy = float(amount_buy_string)
 
+                # Split and remove the thousands separator from the strings
                 price_buy_string = buy_line.split('for ')[1]
                 price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
+
+                # set the price of the shop
                 price_buy = float(price_buy_string)
+
+                # caclulate the per item price
                 buy = price_buy / amount_buy
 
-            #* get sell price
+            #* get sell price, loops until it finds the line it's on 
             sell_line = None
             for j in range(i + 1, min(i + 2001, len(lines))):
                 if '[CHAT] Shop Information:' in lines[j]:
@@ -134,15 +150,24 @@ try:
                     sell_line = lines[j]
                     break
 
+            # if the line was found, process it
             if sell_line:
-                # Remove the thousands separator from the strings
+                
+                # Split and remove the thousands separator from the strings
                 amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
                 amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
+
+                # set the item count of the shop
                 amount_sell = float(amount_sell_string)
 
+                # Split and remove the thousands separator from the strings
                 price_sell_string = sell_line.split('for ')[1]
                 price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
+
+                # set the price of the shop
                 price_sell = float(price_sell_string)
+
+                # caclulate the per item price
                 sell = price_sell / amount_sell
 
             #* add row to excel workbook if all data is present
@@ -155,6 +180,7 @@ try:
                 #print(f"The buy price is: ${buy}")
                 #print(f"The sell price is: ${sell}")
 
+                # unset prices so they don't acidently get reused
                 sell = None
                 buy = None  
 
@@ -164,9 +190,11 @@ try:
     wb.save(f'./exports/{date}-at-{customtime}-shopdata.xlsx')
     wb.save('./exports/latest-shopdata.xlsx')
 
+    # compare time var to earlier to find how long it took
     end_time = time.time()
     elapsed_time = (end_time - start_time)*1000
     print(f"Done! {elapsed_time:.2f}ms")
 
+# throw and error if it doesn't find the log file
 except FileNotFoundError:
     print(f"{latest_log} could not be found.")
