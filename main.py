@@ -1,7 +1,7 @@
 """
 ## MythicMC-Shoplogger
 
-Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \ 
+Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \
 MIT, see LICENSE for more details.
 """
 
@@ -69,11 +69,11 @@ try:
     with open(latest_log, 'r') as file:
         lines = file.readlines()
         buy = sell = None
-    
+
     #^ runs when fines the correct shop info header
     for i, line in enumerate(lines):
         if '[CHAT] Shop Information:' in line:
-            
+
             #* get owner of the shop
             owner = line.split('Owner: ')[1].split('\\n')[0]
 
@@ -90,13 +90,13 @@ try:
                     item = index_dictionary[item]
                 except KeyError:
                     item = 'ERROR Unknown Enchanted Book: ' + item
-            
+
             if item.startswith('Potion#'):
                 try:
                     item = index_dictionary[item]
                 except KeyError:
                     item = 'ERROR Unknown Potion: ' + item
-            
+
             if item.startswith('Player Head#'):
                 try:
                     item = index_dictionary[item]
@@ -104,28 +104,36 @@ try:
                     item = 'ERROR Unknown Head: ' + item
 
             #* get buy price
-            if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]):
+            if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]) or (i + 3 < len(lines) and '[CHAT] Buy' in lines[i + 3] and 'for' in lines[i + 3]) or (i + 4 < len(lines) and '[CHAT] Buy' in lines[i + 4] and 'for' in lines[i + 4]):
                 if '[CHAT] Buy' in lines[i + 1]:
                     buy_line = lines[i + 1]
-                else:
+                elif '[CHAT] Buy' in lines[i + 2]:
                     buy_line = lines[i + 2]
-                
+                elif '[CHAT] Buy' in lines[i + 3]:
+                    buy_line = lines[i + 3]
+                else:
+                    buy_line = lines[i + 4]
+                    
                 # Remove the thousands separator from the strings
                 amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
                 amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
-                amount_buy = float(amount_buy_string)
 
+                amount_buy = float(amount_buy_string)
                 price_buy_string = buy_line.split('for ')[1]
                 price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
                 price_buy = float(price_buy_string)
                 buy = price_buy / amount_buy
 
             #* get sell price
-            if (i + 1 < len(lines) and '[CHAT] Sell' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Sell' in lines[i + 2] and 'for' in lines[i + 2]):
+            if (i + 1 < len(lines) and '[CHAT] Sell' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Sell' in lines[i + 2] and 'for' in lines[i + 2]) or (i + 3 < len(lines) and '[CHAT] Sell' in lines[i + 3] and 'for' in lines[i + 3]) or (i + 4 < len(lines) and '[CHAT] Sell' in lines[i + 4] and 'for' in lines[i + 4]):
                 if '[CHAT] Sell' in lines[i + 1]:
                     sell_line = lines[i + 1]
-                else:
+                elif '[CHAT] Sell' in lines[i + 2]:
                     sell_line = lines[i + 2]
+                elif '[CHAT] Sell' in lines[i + 3]:
+                    sell_line = lines[i + 3]
+                else:
+                    sell_line = lines[i + 4]
 
                 # Remove the thousands separator from the strings
                 amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
@@ -141,6 +149,11 @@ try:
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
                 ws.append([item, owner, buy, sell])
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
+
+                sell_line = None
+                buy_line = None
+                sell = None
+                buy = None  
 
     #^ Save the workbook to a file
     customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
