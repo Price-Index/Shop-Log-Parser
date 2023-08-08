@@ -52,15 +52,15 @@ parser = argparse.ArgumentParser(
     description=f'{new_version}{REPO} {version}\nCopyright (c) Vox313 and 32294'
     )
 
-# Set up argument parser
+# args for resource pack path
 parser.add_argument('-pp', '--pathresourcepack', type=file_path, help='Path to the resource pack folder (this path will be cached).')
 parser.add_argument('-tpp', '--temppathresourcepack', type=file_path, help='Temporarily set the path for one run.')
 parser.add_argument('-rpp', '--releasepathresourcpack', action='store_true', help='Releases cached path.')
 
+# args for render output path
 parser.add_argument('-pr', '--pathrenders', type=file_path, help='Path to the renders folder from the mod (this path will be cached).')
 parser.add_argument('-tpr', '--temppathrenders', type=file_path, help='Temporarily set the path for one run.')
 parser.add_argument('-rpr', '--releasepathrenders', action='store_true', help='Releases cached path.')
-
 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
