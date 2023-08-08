@@ -67,6 +67,11 @@ cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
+# Create exports directory if it doesn't exist
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
+if not os.path.exists(exports_dir):
+    os.makedirs(exports_dir)
+
 # Check if --path is set
 if args.path:
     # Save path to cache file
