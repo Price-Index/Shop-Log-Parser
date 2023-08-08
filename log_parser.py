@@ -269,8 +269,8 @@ try:
     #^ Save the workbook to a file
     customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
     date = datetime.datetime.now().date()
-    wb.save(f'./exports/{date}-at-{customtime}-shopdata.xlsx')
-    wb.save('./exports/latest-shopdata.xlsx')
+    wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata.xlsx')
+    wb.save('./exports/log_parser/latest-shopdata.xlsx')
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
