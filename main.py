@@ -149,6 +149,11 @@ try:
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
                 ws.append([item, owner, buy, sell])
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
+                
+                # Uncomment when debugging
+                #print(f"The item is: {item}")
+                #print(f"The buy price is: ${buy}")
+                #print(f"The sell price is: ${sell}")
 
                 sell_line = None
                 buy_line = None
