@@ -104,37 +104,37 @@ try:
                     item = 'ERROR Unknown Head: ' + item
 
             #* get buy price
-            if (i + 1 < len(lines) and '[CHAT] Buy' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Buy' in lines[i + 2] and 'for' in lines[i + 2]) or (i + 3 < len(lines) and '[CHAT] Buy' in lines[i + 3] and 'for' in lines[i + 3]) or (i + 4 < len(lines) and '[CHAT] Buy' in lines[i + 4] and 'for' in lines[i + 4]):
-                if '[CHAT] Buy' in lines[i + 1]:
-                    buy_line = lines[i + 1]
-                elif '[CHAT] Buy' in lines[i + 2]:
-                    buy_line = lines[i + 2]
-                elif '[CHAT] Buy' in lines[i + 3]:
-                    buy_line = lines[i + 3]
-                else:
-                    buy_line = lines[i + 4]
-                    
+            buy_line = None
+            for j in range(i + 1, min(i + 2001, len(lines))):
+                if '[CHAT] Shop Information:' in lines[j]:
+                    # We have reached the end of the current item, stop searching for buy price information
+                    break
+                if '[CHAT] Buy' in lines[j] and 'for' in lines[j]:
+                    buy_line = lines[j]
+                    break
+
+            if buy_line:
                 # Remove the thousands separator from the strings
                 amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
                 amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
-
                 amount_buy = float(amount_buy_string)
+
                 price_buy_string = buy_line.split('for ')[1]
                 price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
                 price_buy = float(price_buy_string)
                 buy = price_buy / amount_buy
 
             #* get sell price
-            if (i + 1 < len(lines) and '[CHAT] Sell' in lines[i + 1] and 'for' in lines[i + 1]) or (i + 2 < len(lines) and '[CHAT] Sell' in lines[i + 2] and 'for' in lines[i + 2]) or (i + 3 < len(lines) and '[CHAT] Sell' in lines[i + 3] and 'for' in lines[i + 3]) or (i + 4 < len(lines) and '[CHAT] Sell' in lines[i + 4] and 'for' in lines[i + 4]):
-                if '[CHAT] Sell' in lines[i + 1]:
-                    sell_line = lines[i + 1]
-                elif '[CHAT] Sell' in lines[i + 2]:
-                    sell_line = lines[i + 2]
-                elif '[CHAT] Sell' in lines[i + 3]:
-                    sell_line = lines[i + 3]
-                else:
-                    sell_line = lines[i + 4]
+            sell_line = None
+            for j in range(i + 1, min(i + 2001, len(lines))):
+                if '[CHAT] Shop Information:' in lines[j]:
+                    # We have reached the end of the current item, stop searching for sell price information
+                    break
+                if '[CHAT] Sell' in lines[j] and 'for' in lines[j]:
+                    sell_line = lines[j]
+                    break
 
+            if sell_line:
                 # Remove the thousands separator from the strings
                 amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
                 amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
@@ -151,12 +151,10 @@ try:
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
                 
                 # Uncomment when debugging
-                #print(f"The item is: {item}")
-                #print(f"The buy price is: ${buy}")
-                #print(f"The sell price is: ${sell}")
+                print(f"The item is: {item}")
+                print(f"The buy price is: ${buy}")
+                print(f"The sell price is: ${sell}")
 
-                sell_line = None
-                buy_line = None
                 sell = None
                 buy = None  
 
