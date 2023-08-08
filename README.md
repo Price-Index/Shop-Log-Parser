@@ -18,8 +18,16 @@ They should work *in theory*, but please provide Feedback.
 ## How to use
 - Make sure you've joined [MythicMC](https://mythicmc.org)
 - Go to any shop and right click the **chest** of a chestshop
-- Run the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
+- [Run](#how-to-run) the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
 - Open the new ``./exports/latest-shopdata.xlsx`` file which contains the data. 
+
+## How to run
+Open the projects root folder in your terminal and execute the following;
+```py
+python3 main.py -h
+```
+This will show you additional info of how to use the script.
+Depending on your OS it might be py python python3 or whatever keyword your terminal uses.
 
 ## Additional information
 The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.

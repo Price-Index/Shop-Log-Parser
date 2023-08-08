@@ -7,11 +7,39 @@ MIT, see LICENSE for more details.
 
 # import neccessary libraries
 # please install openpyxl using "pip3.10 install openpyxl"
-import os, json, datetime, argparse, time
+import os, json, datetime, argparse, time, requests
 from openpyxl import Workbook
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
+
+OWNER = 'Vox314'
+REPO = 'MythicMC-shoplogger'
+version = 'v0.1.3'
+
+def get_latest_release(owner, repo):
+    headers = {
+        'Accept': 'application/vnd.github+json'
+    }
+    url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
+    try:
+        response = requests.get(url, headers=headers)
+    except requests.exceptions.RequestException:
+        print('Warning: Could not connect to the GitHub API. vUnknown.')
+        return 'vUnknown'
+
+    if response.status_code == 200:
+        return response.json()['tag_name']
+    else:
+        print(f'An error occurred: {response.text}')
+        return 'vUnknown'
+
+latest_version = get_latest_release(OWNER, REPO)
+
+if latest_version == version or latest_version == 'vUnknown':
+    new_version = ''
+else:
+    new_version = f'{latest_version} is now available!\n'
 
 # Determine the Minecraft directory based on the user's operating system
 def file_path(string):
@@ -23,14 +51,63 @@ def file_path(string):
 # Arguments for the command
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawTextHelpFormatter,
-    description=f'MythicMC shoplogger\nA logger for MythicMC shops to an excel file.'
+    description=f'{new_version}{REPO} {version}\nCopyright (c) Vox313 and 32294'
     )
 
-# `--path` argument to specify the file 
-parser.add_argument('--path', type=file_path, help='Path to the latest.log file of the Minecraft directory')
+# Set up argument parser
+parser.add_argument('-p', '--path', type=file_path, help='Path to the latest.log file of the directory (this path will be cached).')
+parser.add_argument('-tp', '--temppath', type=file_path, help='Temporarily set the path for one run.')
+parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
 
 # get the arguments given to the command
 args = parser.parse_args()
+
+# Create cache directory if it doesn't exist
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+
+# Check if --path is set
+if args.path:
+    # Save path to cache file
+    with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
+        json.dump({'path': args.path}, f)
+
+    print(f'Path saved to cache: {args.path}')
+elif args.temppath:
+    # Save temporary path to cache file
+    with open(os.path.join(cache_dir, 'temp_path_cache.json'), 'w') as f:
+        json.dump({'path': args.temppath}, f)
+
+    print(f'Temporary path saved to cache: {args.temppath}')
+elif args.releasepath:
+    # Delete saved path from cache file
+    cache_file = os.path.join(cache_dir, 'path_cache.json')
+    if os.path.exists(cache_file):
+        os.remove(cache_file)
+
+    print(f'Saved path released')
+else:
+    # Load temporary path from cache file if it exists
+    temp_cache_file = os.path.join(cache_dir, 'temp_path_cache.json')
+    if os.path.exists(temp_cache_file):
+        with open(temp_cache_file, 'r') as f:
+            cache_data = json.load(f)
+            args.path = cache_data['path']
+
+        # Delete temporary cache file
+        os.remove(temp_cache_file)
+
+        print(f'Temporary path loaded from cache: {args.path}')
+    else:
+        # Load permanent path from cache file if it exists
+        perm_cache_file = os.path.join(cache_dir, 'path_cache.json')
+        if os.path.exists(perm_cache_file):
+            with open(perm_cache_file, 'r') as f:
+                cache_data = json.load(f)
+                args.path = cache_data['path']
+
+            print(f'Permanent path loaded from cache: {args.path}')
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
@@ -180,7 +257,7 @@ try:
                 #print(f"The buy price is: ${buy}")
                 #print(f"The sell price is: ${sell}")
 
-                # unset prices so they don't acidently get reused
+                # unset prices so they don't accidentally get re-used
                 sell = None
                 buy = None  
 
