@@ -55,7 +55,7 @@ parser = argparse.ArgumentParser(
 # args for resource pack path
 parser.add_argument('-pp', '--pathresourcepack', type=file_path, help='Path to the resource pack folder (this path will be cached).')
 parser.add_argument('-tpp', '--temppathresourcepack', type=file_path, help='Temporarily set the path for one run.')
-parser.add_argument('-rpp', '--releasepathresourcpack', action='store_true', help='Releases cached path.')
+parser.add_argument('-rpp', '--releasepathresourcepack', action='store_true', help='Releases cached path.')
 
 # args for render output path
 parser.add_argument('-pr', '--pathrenders', type=file_path, help='Path to the renders folder from the mod (this path will be cached).')
@@ -64,8 +64,8 @@ parser.add_argument('-rpr', '--releasepathrenders', action='store_true', help='R
 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
-parser.add_argument('-s', '--sendrenders',
-parser.add_argument('-r', '--retrieverenders',
+parser.add_argument('-s', '--sendrenders')
+parser.add_argument('-r', '--retrieverenders')
 
 
 # get the arguments given to the command
@@ -164,3 +164,11 @@ else:
                 args.pathrenders = cache_data['path']
 
             print(f'Permanent path loaded from cache: {args.path}')
+
+try:
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"Done! {elapsed_time:.2f}ms")
+except:
+    raise
