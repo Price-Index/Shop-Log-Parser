@@ -62,6 +62,10 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 # get the arguments given to the command
 args = parser.parse_args()
 
+# prevents NameError
+path2 = None
+temppath2 = None
+
 # Create cache directory if it doesn't exist
 cache_dir = os.path.join(os.path.dirname(__file__), 'cache/log_parser')
 if not os.path.exists(cache_dir):
@@ -92,31 +96,41 @@ elif args.releasepath:
         os.remove(cache_file)
 
     print(f'Saved path released')
+    
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"Done! {elapsed_time:.2f}ms")
+    exit()
 else:
     # Load temporary path from cache file if it exists
     temp_cache_file = os.path.join(cache_dir, 'temp_path_cache.json')
     if os.path.exists(temp_cache_file):
         with open(temp_cache_file, 'r') as f:
             cache_data = json.load(f)
-            args.path = cache_data['path']
+            temppath2 = cache_data['path']
 
         # Delete temporary cache file
         os.remove(temp_cache_file)
 
-        print(f'Temporary path loaded from cache: {args.path}')
+        print(f'Temporary path loaded from cache: {temppath2}')
     else:
         # Load permanent path from cache file if it exists
         perm_cache_file = os.path.join(cache_dir, 'path_cache.json')
         if os.path.exists(perm_cache_file):
             with open(perm_cache_file, 'r') as f:
                 cache_data = json.load(f)
-                args.path = cache_data['path']
+                path2 = cache_data['path']
 
-            print(f'Permanent path loaded from cache: {args.path}')
+            print(f'Permanent path loaded from cache: {path2}')
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
     latest_log = os.path.join(args.path, 'latest.log')
+elif path2:
+    latest_log = path2
+elif temppath2:
+    latest_log = temppath2
 else:
     if os.name == 'nt':  # Windows
         minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
@@ -146,7 +160,6 @@ shop_info = []
 # Dictionary #?? ids into human readable names
 dict_pages = ['enchanted_books.json','potions.json','heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
-
 
 for file_name in dict_pages:
     with open(f"./resources/log_parser/{file_name}", 'r') as file:
