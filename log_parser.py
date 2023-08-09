@@ -43,7 +43,7 @@ else:
 
 # Determine the Minecraft directory based on the user's operating system
 def file_path(string):
-    if os.path.isfile(string):
+    if os.path.isdir(string):
         return string
     else:
         raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
@@ -116,7 +116,7 @@ else:
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
-    latest_log = args.path
+    latest_log = os.path.join(args.path, 'latest.log')
 else:
     if os.name == 'nt':  # Windows
         minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
