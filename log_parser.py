@@ -14,8 +14,8 @@ from openpyxl import Workbook
 start_time = time.time()
 
 OWNER = 'Vox314'
-REPO = 'MythicMC-shoplogger'
-version = 'v0.1.3'
+REPO = 'MythicMc-Price-Index-Utils'
+version = 'v1.0.0'
 
 def get_latest_release(owner, repo):
     headers = {
