@@ -76,15 +76,15 @@ if not os.path.exists(exports_dir):
 if args.path:
     # Save path to cache file
     with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
-        json.dump({'path': args.path}, f)
+        json.dump({'path': os.path.join(args.path, 'latest.log')}, f)
 
-    print(f'Path saved to cache: {args.path}')
+    print(f'Path saved to cache: {os.path.join(args.path, "latest.log")}')
 elif args.temppath:
     # Save temporary path to cache file
     with open(os.path.join(cache_dir, 'temp_path_cache.json'), 'w') as f:
-        json.dump({'path': args.temppath}, f)
+        json.dump({'path': os.path.join(args.temppath, 'latest.log')}, f)
 
-    print(f'Temporary path saved to cache: {args.temppath}')
+    print(f'Temporary path saved to cache: {os.path.join(args.temppath, "latest.log")}')
 elif args.releasepath:
     # Delete saved path from cache file
     cache_file = os.path.join(cache_dir, 'path_cache.json')

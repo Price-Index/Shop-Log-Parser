@@ -6,7 +6,7 @@ MIT, see LICENSE for more details.
 """
 
 # import neccessary libraries
-import os, json, datetime, argparse, time, requests
+import os, json, argparse, time, requests, zipfile
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
@@ -117,6 +117,21 @@ else:
                 args.pathresourcepack = cache_data['path']
 
             print(f'Permanent path loaded from cache: {args.pathresourcepack}')
+
+# test if path was given, if not use the default path based on what OS it's being ran on.
+if args.path:
+    pack = args.path
+else:
+    if os.name == 'nt':  # Windows
+        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'versions')
+    elif os.name == 'posix':  # macOS and Linux
+        home_dir = os.path.expanduser('~')
+        if os.uname()[0] == 'Darwin':  # macOS
+            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'versions')
+        else:  # Linux
+            minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
+
+    pack = os.path.join(minecraft_dir, 'FILENAME') # still working here don't touch
 
 try:
     # compare time var to earlier to find how long it took
