@@ -186,6 +186,12 @@ try:
                 except KeyError:
                     item = 'ERROR Unknown Potion: ' + item
 
+            if item.startswith('Splash Potion#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'ERROR Unknown Splash Potion: ' + item
+
             if item.startswith('Player Head#'):
                 try:
                     item = index_dictionary[item]

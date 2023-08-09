@@ -57,11 +57,6 @@ parser.add_argument('-pp', '--pathresourcepack', type=file_path, help='Path to t
 parser.add_argument('-tpp', '--temppathresourcepack', type=file_path, help='Temporarily set the path for one run.')
 parser.add_argument('-rpp', '--releasepathresourcepack', action='store_true', help='Releases cached path.')
 
-# args for render output path
-parser.add_argument('-pr', '--pathrenders', type=file_path, help='Path to the renders folder from the mod (this path will be cached).')
-parser.add_argument('-tpr', '--temppathrenders', type=file_path, help='Temporarily set the path for one run.')
-parser.add_argument('-rpr', '--releasepathrenders', action='store_true', help='Releases cached path.')
-
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
 parser.add_argument('-s', '--sendrenders')
@@ -122,48 +117,6 @@ else:
                 args.pathresourcepack = cache_data['path']
 
             print(f'Permanent path loaded from cache: {args.pathresourcepack}')
-
-# Check if --pathrenders is set
-if args.pathrenders:
-    # Save path to cache file
-    with open(os.path.join(cache_dir, 'renders_path_cache.json'), 'w') as f:
-        json.dump({'path': args.pathrenders}, f)
-
-    print(f'Path saved to cache: {args.pathrenders}')
-elif args.temppathrenders:
-    # Save temporary path to cache file
-    with open(os.path.join(cache_dir, 'renders_temp_path_cache.json'), 'w') as f:
-        json.dump({'path': args.temppathrenders}, f)
-
-    print(f'Temporary path saved to cache: {args.temppath}')
-elif args.releasepathrenders:
-    # Delete saved path from cache file
-    cache_file = os.path.join(cache_dir, 'renders_path_cache.json')
-    if os.path.exists(cache_file):
-        os.remove(cache_file)
-
-    print(f'Saved path released')
-else:
-    # Load temporary path from cache file if it exists
-    temp_cache_file = os.path.join(cache_dir, 'renders_temp_path_cache.json')
-    if os.path.exists(temp_cache_file):
-        with open(temp_cache_file, 'r') as f:
-            cache_data = json.load(f)
-            args.pathrenders = cache_data['path']
-
-        # Delete temporary cache file
-        os.remove(temp_cache_file)
-
-        print(f'Temporary path loaded from cache: {args.pathrenders}')
-    else:
-        # Load permanent path from cache file if it exists
-        perm_cache_file = os.path.join(cache_dir, 'renders_path_cache.json')
-        if os.path.exists(perm_cache_file):
-            with open(perm_cache_file, 'r') as f:
-                cache_data = json.load(f)
-                args.pathrenders = cache_data['path']
-
-            print(f'Permanent path loaded from cache: {args.path}')
 
 try:
     # compare time var to earlier to find how long it took
