@@ -158,7 +158,7 @@ thousands_separator = ','
 shop_info = []
 
 # Dictionary #?? ids into human readable names
-dict_pages = ['enchanted_books.json','potions.json','heads.json'] # dictionary pages (you can add more in the future)
+dict_pages = ['enchanted_books.json','potions.json','splash_potions.json','lingering_potions.json','tipped_arrows.json','heads.json'] # dictionary pages (you can add more in the future)
 index_dictionary = {}
 
 for file_name in dict_pages:
@@ -204,6 +204,18 @@ try:
                     item = index_dictionary[item]
                 except KeyError:
                     item = 'ERROR Unknown Splash Potion: ' + item
+
+            if item.startswith('Lingering Potion#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'ERROR Unknown Lingering Potion: ' + item
+
+            if item.startswith('Tipped Arrow#'):
+                try:
+                    item = index_dictionary[item]
+                except KeyError:
+                    item = 'ERROR Unknown Tipped Arrow: ' + item
 
             if item.startswith('Player Head#'):
                 try:
