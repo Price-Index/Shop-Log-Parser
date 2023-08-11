@@ -21,18 +21,6 @@
   "Potion#hy": "Slowness",
   "Potion#pK": "Slowness 4",
   "Potion#2N": "Night Vision Extended",
-  "Splash Potion#1Z": "Splash Speed 2",
-  "Splash Potion#22": "Splash Jump Boost 2",
-  "Splash Potion#1G": "Splash Strength Extended",
-  "Splash Potion#1X": "Splash Strength 2",
-  "Splash Potion#1F": "Splash Poison Extended",
-  "Splash Potion#1H": "Splash Instant Health 2",
-  "Splash Potion#1I": "Splash Fire Resistance Extended",
-  "Splash Potion#1J": "Splash Instant Damage 2",
-  "Splash Potion#1N": "Splash Invisibility Extended",
-  "Splash Potion#1O": "Splash Slowness Extended",
-  "Splash Potion#1Q": "Splash Weakness Extended",
-  "Splash Potion#21": "Splash Weakness",
-  "Splash Potion#1Y": "Splash Poison 2",
-  "Splash Potion#24": "Splash Slowness 4"
+  "Potion#gX": "Turtle Master Extended",
+  "Potion#gW": "Turtle Master 2"
 }
