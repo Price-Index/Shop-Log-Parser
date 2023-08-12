@@ -53,9 +53,9 @@ parser = argparse.ArgumentParser(
     )
 
 # args for resource pack path
-parser.add_argument('-pp', '--pathresourcepack', type=file_path, help='Path to the resource pack folder (this path will be cached).')
-parser.add_argument('-tpp', '--temppathresourcepack', type=file_path, help='Temporarily set the path for one run.')
-parser.add_argument('-rpp', '--releasepathresourcepack', action='store_true', help='Releases cached path.')
+parser.add_argument('-p', '--path', type=file_path, help='Path to the .minecraft folder (this path will be cached).')
+parser.add_argument('-tp', '--temppath', type=file_path, help='Temporarily set the path for one run.')
+parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
@@ -81,22 +81,22 @@ extracted_dir = os.path.join(os.path.dirname(__file__), 'cache/renderer/extracts
 if not os.path.exists(extracted_dir):
     os.makedirs(extracted_dir)
 
-# Check if --pathresourcepack is set
-if args.pathresourcepack:
+# Check if --path is set
+if args.path:
     # Save path to cache file
-    with open(os.path.join(cache_dir, 'resourcepack_path_cache.json'), 'w') as f:
-        json.dump({'path': args.pathresourcepack}, f)
+    with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
+        json.dump({'path': args.path}, f)
 
-    print(f'Path saved to cache: {args.pathresourcepack}')
-elif args.temppathresourcepack:
+    print(f'Path saved to cache: {args.path}')
+elif args.temppath:
     # Save temporary path to cache file
-    with open(os.path.join(cache_dir, 'resourcepack_temp_path_cache.json'), 'w') as f:
-        json.dump({'path': args.temppathresourcepack}, f)
+    with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
+        json.dump({'path': args.temppath}, f)
 
-    print(f'Temporary path saved to cache: {args.temppathresourcepack}')
-elif args.releasepathresourcepack:
+    print(f'Temporary path saved to cache: {args.temppath}')
+elif args.releasepath:
     # Delete saved path from cache file
-    cache_file = os.path.join(cache_dir, 'resourcepack_path_cache.json')
+    cache_file = os.path.join(cache_dir, 'path_cache.json')
     if os.path.exists(cache_file):
         os.remove(cache_file)
     
@@ -109,29 +109,29 @@ elif args.releasepathresourcepack:
     exit()
 else:
     # Load temporary path from cache file if it exists
-    temp_cache_file = os.path.join(cache_dir, 'resourcepack_temp_path_cache.json')
+    temp_cache_file = os.path.join(cache_dir, 'path_cache.json')
     if os.path.exists(temp_cache_file):
         with open(temp_cache_file, 'r') as f:
             cache_data = json.load(f)
-            args.pathresourcepack = cache_data['path']
+            args.path = cache_data['path']
 
         # Delete temporary cache file
         os.remove(temp_cache_file)
 
-        print(f'Temporary path loaded from cache: {args.pathresourcepack}')
+        print(f'Temporary path loaded from cache: {args.path}')
     else:
         # Load permanent path from cache file if it exists
-        perm_cache_file = os.path.join(cache_dir, 'resourcepack_path_cache.json')
+        perm_cache_file = os.path.join(cache_dir, 'path_cache.json')
         if os.path.exists(perm_cache_file):
             with open(perm_cache_file, 'r') as f:
                 cache_data = json.load(f)
-                args.pathresourcepack = cache_data['path']
+                args.path = cache_data['path']
 
-            print(f'Permanent path loaded from cache: {args.pathresourcepack}')
+            print(f'Permanent path loaded from cache: {args.path}')
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
-    resourcepack = args.path
+    path = args.path
 else:
     if os.name == 'nt':  # Windows
         minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'versions')
