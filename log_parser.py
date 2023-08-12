@@ -127,10 +127,10 @@ else:
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
     latest_log = os.path.join(args.path, 'latest.log')
-elif path2:
-    latest_log = path2
 elif temppath2:
     latest_log = temppath2
+elif path2:
+    latest_log = path2
 else:
     if os.name == 'nt':  # Windows
         minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
