@@ -76,6 +76,11 @@ exports_dir = os.path.join(os.path.dirname(__file__), 'exports/renders')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
+# Create the output directory if it doesn't exist
+extracted_dir = os.path.join(os.path.dirname(__file__), 'cache/renderer/extracts')
+if not os.path.exists(extracted_dir):
+    os.makedirs(extracted_dir)
+
 # Check if --pathresourcepack is set
 if args.pathresourcepack:
     # Save path to cache file
@@ -94,8 +99,14 @@ elif args.releasepathresourcepack:
     cache_file = os.path.join(cache_dir, 'resourcepack_path_cache.json')
     if os.path.exists(cache_file):
         os.remove(cache_file)
-
+    
     print(f'Saved path released')
+    
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"Done! {elapsed_time:.2f}ms")
+    exit()
 else:
     # Load temporary path from cache file if it exists
     temp_cache_file = os.path.join(cache_dir, 'resourcepack_temp_path_cache.json')
@@ -131,7 +142,21 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
 
-    resourcepack = os.path.join(minecraft_dir, 'FILENAME') # still working here don't touch
+    # Get a list of all installed Minecraft versions that start with 1.x
+    versions = [d for d in os.listdir(minecraft_dir) if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.')]
+
+    # Sort the versions in descending order
+    versions.sort(key=lambda v: tuple(map(int, v.split('.'))), reverse=True)
+
+    # Set the path to the latest Minecraft .jar file
+    jar_file_path = os.path.join(minecraft_dir, versions[0], f'{versions[0]}.jar')
+
+    # Open the .jar file
+    with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
+        # Extract all files in the assets folder
+        for file in jar_file.namelist():
+            if file.startswith('assets/'):
+                jar_file.extract(file, extracted_dir)
 
 try:
     # compare time var to earlier to find how long it took
