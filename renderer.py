@@ -13,7 +13,7 @@ start_time = time.time()
 
 OWNER = 'Vox314'
 REPO = 'MythicMC-Price-Index-Utils'
-version = 'v0.1.3'
+version = 'v1.0.0'
 
 def get_latest_release(owner, repo):
     headers = {
@@ -163,5 +163,7 @@ try:
     end_time = time.time()
     elapsed_time = (end_time - start_time)*1000
     print(f"Done! {elapsed_time:.2f}ms")
-except:
-    raise
+
+# throw and error if it doesn't find the log file
+except FileNotFoundError:
+    print(f"{minecraft_dir} could not be found.")
