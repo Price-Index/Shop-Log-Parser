@@ -165,6 +165,11 @@ if args.sendrenders:
 
     # Put code here to delete em from pack folder
 
+if args.retrieverenders:
+
+    # Deletes the original pack folder in minecraft directory
+    shutil.rmtree(dst_folder)
+
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
     try:
