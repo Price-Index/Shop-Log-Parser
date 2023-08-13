@@ -95,7 +95,7 @@ elif args.releasepath:
     if os.path.exists(cache_file):
         os.remove(cache_file)
 
-    print(f'Saved path released')
+    print(f'Saved path released!')
     
     # compare time var to earlier to find how long it took
     end_time = time.time()
