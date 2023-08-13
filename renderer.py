@@ -6,7 +6,7 @@ MIT, see LICENSE for more details.
 """
 
 # import neccessary libraries
-import os, json, argparse, time, requests, zipfile
+import os, json, argparse, time, requests, zipfile, shutil
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
@@ -61,7 +61,6 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 #! -r will be for pulling the renders back
 parser.add_argument('-s', '--sendrenders')
 parser.add_argument('-r', '--retrieverenders')
-
 
 # get the arguments given to the command
 args = parser.parse_args()
@@ -150,6 +149,22 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft')
 
+# Sending the renders and renaming em into the folder, then deleting
+if args.sendrenders:
+
+    # Put code here to rename em into pack folder
+
+    src_folder = '/resources/renderer/render_pack'
+    dst_folder = os.path.join(minecraft_dir, 'resourcepacks')
+
+    # Custom pack name (as we are not using a .zip)
+    new_name = '§5§lRender §3§lPack'
+
+    shutil.copytree(src_folder, dst_folder)
+    os.rename(dst_folder, os.path.join(os.path.dirname(dst_folder), new_name))
+
+    # Put code here to delete em from pack folder
+
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
     try:
@@ -192,14 +207,14 @@ try:
             if file.startswith('assets/'):
                 jar_file.extract(file, extracted_dir)
 
-    # compare time var to earlier to find how long it took
-    end_time = time.time()
-    elapsed_time = (end_time - start_time)*1000
-    print(f"Done! {elapsed_time:.2f}ms")
-
 # throw and error if try fails
 except FileNotFoundError:
     print(f"This Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.\n")
 
 except IndexError:
     print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
+
+# compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"Done! {elapsed_time:.2f}ms")
