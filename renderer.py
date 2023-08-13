@@ -60,7 +60,7 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
 parser.add_argument('-s', '--sendrenders', action='store_true', help='Adds the first batch of the pack to your minecraft directory.')
-parser.add_argument('-r', '--retrieverenders')
+parser.add_argument('-r', '--retrieverenders', action='store_true', help='Outputs the first batch of the rendered files.')
 
 # get the arguments given to the command
 args = parser.parse_args()
@@ -150,27 +150,35 @@ else:
             minecraft_dir = os.path.join(home_dir, '.minecraft')
 
 # Sending the renders and renaming em into the folder, then deleting
+
+# Custom pack name (as we are not using a .zip)
+new_name = '§5§lRender §3§lPack'
+
+# Directories for the resourcepack
+src_folder = 'resources/renderer/render_pack'
+dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
+
 if args.sendrenders:
 
     # Put code here to rename em into pack folder
 
     # Moving the pack folder into minecraft directory
-
-    # Custom pack name (as we are not using a .zip)
-    new_name = '§5§lRender §3§lPack'
-
-    src_folder = 'resources/renderer/render_pack'
-    dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
-    print(dst_folder)
-
     shutil.copytree(src_folder, dst_folder)
 
     # Put code here to delete em from pack folder
 
+    exit()
+
 if args.retrieverenders:
 
-    # Deletes the original pack folder in minecraft directory
+    # Put code here to move first batch into cache or some folder
+
+    # Deletes the original pack folder from minecraft directory
     shutil.rmtree(dst_folder)
+
+    # Put code here to output rendered images
+
+    exit()
 
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
