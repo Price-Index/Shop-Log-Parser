@@ -142,13 +142,13 @@ elif path2:
     minecraft_dir = path2
 else:
     if os.name == 'nt':  # Windows
-        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'versions')
+        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft')
     elif os.name == 'posix':  # macOS and Linux
         home_dir = os.path.expanduser('~')
         if os.uname()[0] == 'Darwin':  # macOS
-            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'versions')
+            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft')
         else:  # Linux
-            minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
+            minecraft_dir = os.path.join(home_dir, '.minecraft')
 
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
@@ -165,8 +165,10 @@ version_numbers = {}
 versions = []
 
 try:
-    for d in os.listdir(minecraft_dir):
-        if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.'):
+    ver_path = os.path.join(minecraft_dir, 'versions')
+
+    for d in os.listdir(ver_path):
+        if os.path.isdir(os.path.join(ver_path, d)) and d.startswith('1.'):
             version_number = try_int_or_float(d.split('.')[1])
             version_numbers[d] = version_number
             if version_number is not None and version_number > 16:
@@ -179,7 +181,7 @@ try:
 
     # Set the path to the latest Minecraft .jar file
     print(versions)
-    jar_file_path = os.path.join(minecraft_dir, versions[0], f'{versions[0]}.jar')
+    jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
 
     print(f"\nSelecting latest version: {versions[0]}")
     print(f"Extracting items from: {jar_file_path}\n")
@@ -198,7 +200,7 @@ try:
 
 # throw and error if try fails
 except FileNotFoundError:
-    print(f"{minecraft_dir} could not be found.\n")
+    print(f"This Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.\n")
 
 except IndexError:
-    print("Possibly wrong directory?")
+    print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
