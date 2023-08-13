@@ -142,11 +142,29 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
 
-    # Get a list of all installed Minecraft versions that start with 1.x
-    versions = [d for d in os.listdir(minecraft_dir) if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.')]
+    # Prevents ValueError of unability to convert string example: '1.19-pre3'
+    def try_int_or_float(s, full_name):
+        print(f'Processing directory: {full_name}') # uncomment when debugging
+        try:
+            return int(s)
+        except ValueError:
+            try:
+                return float(s)
+            except ValueError:
+                return None
+
+    # Get a list of all installed Minecraft versions that start with 1.x and are greater than or equal to 1.16
+    version_numbers = {}
+    versions = []
+    for d in os.listdir(minecraft_dir):
+        if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.'):
+            version_number = try_int_or_float(d.split('.')[1], d)
+            version_numbers[d] = version_number
+            if version_number is not None and version_number >= 16:
+                versions.append(d)
 
     # Sort the versions in descending order
-    versions.sort(key=lambda v: tuple(map(int, v.split('.'))), reverse=True)
+    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v] is not None else float('-inf'), v.split('.'))), reverse=True)
 
     # Set the path to the latest Minecraft .jar file
     jar_file_path = os.path.join(minecraft_dir, versions[0], f'{versions[0]}.jar')
