@@ -59,7 +59,7 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
-parser.add_argument('-s', '--sendrenders')
+parser.add_argument('-s', '--sendrenders', action='store_true', help='Adds the first batch of the pack to your minecraft directory.')
 parser.add_argument('-r', '--retrieverenders')
 
 # get the arguments given to the command
@@ -154,14 +154,14 @@ if args.sendrenders:
 
     # Put code here to rename em into pack folder
 
-    src_folder = '/resources/renderer/render_pack'
-    dst_folder = os.path.join(minecraft_dir, 'resourcepacks')
-
     # Custom pack name (as we are not using a .zip)
     new_name = '§5§lRender §3§lPack'
 
+    src_folder = 'resources/renderer/render_pack'
+    dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
+    print(dst_folder)
+
     shutil.copytree(src_folder, dst_folder)
-    os.rename(dst_folder, os.path.join(os.path.dirname(dst_folder), new_name))
 
     # Put code here to delete em from pack folder
 
