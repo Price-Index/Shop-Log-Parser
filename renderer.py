@@ -144,7 +144,7 @@ else:
 
     # Prevents ValueError of unability to convert string example: '1.19-pre3'
     def try_int_or_float(s, full_name):
-        print(f'Processing directory: {full_name}') # uncomment when debugging
+        print(f'Processing directory: {full_name}') # Uncomment when debugging
         try:
             return int(s)
         except ValueError:
