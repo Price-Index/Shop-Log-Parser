@@ -154,6 +154,8 @@ if args.sendrenders:
 
     # Put code here to rename em into pack folder
 
+    # Moving the pack folder into minecraft directory
+
     # Custom pack name (as we are not using a .zip)
     new_name = '§5§lRender §3§lPack'
 
