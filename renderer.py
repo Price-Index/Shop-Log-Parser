@@ -135,7 +135,11 @@ else:
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
-    path = args.path
+    minecraft_dir = args.path
+elif temppath2:
+    minecraft_dir = temppath2
+elif path2:
+    minecraft_dir = path2
 else:
     if os.name == 'nt':  # Windows
         minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'versions')
@@ -146,32 +150,35 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
 
-    # Prevents ValueError of unability to convert string example: '1.19-pre3'
-    def try_int_or_float(s):
+# Prevents ValueError of unability to convert string example: '1.19-pre3'
+def try_int_or_float(s):
+    try:
+        return int(s)
+    except ValueError:
         try:
-            return int(s)
+            return float(s)
         except ValueError:
-            try:
-                return float(s)
-            except ValueError:
-                return None
+            return None
 
-    # Get a list of all installed Minecraft versions that start with 1.x and are 1.17+
-    version_numbers = {}
-    versions = []
+# Get a list of all installed Minecraft versions that start with 1.x and are 1.17+
+version_numbers = {}
+versions = []
+
+try:
     for d in os.listdir(minecraft_dir):
         if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.'):
             version_number = try_int_or_float(d.split('.')[1])
             version_numbers[d] = version_number
             if version_number is not None and version_number > 16:
                 versions.append(d)
-                # print(f'Found directory: {d}') # Uncomment when debugging
+                print(f'Found directory: {d}') # Uncomment when debugging
 
     # Sort the versions in descending order
     versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
         is not None else float('-inf'), v.split('.'))), reverse=True)
 
     # Set the path to the latest Minecraft .jar file
+    print(versions)
     jar_file_path = os.path.join(minecraft_dir, versions[0], f'{versions[0]}.jar')
 
     print(f"\nSelecting latest version: {versions[0]}")
@@ -184,12 +191,14 @@ else:
             if file.startswith('assets/'):
                 jar_file.extract(file, extracted_dir)
 
-try:
     # compare time var to earlier to find how long it took
     end_time = time.time()
     elapsed_time = (end_time - start_time)*1000
     print(f"Done! {elapsed_time:.2f}ms")
 
-# throw and error if it doesn't find the log file
+# throw and error if try fails
 except FileNotFoundError:
-    print(f"{minecraft_dir} could not be found.")
+    print(f"{minecraft_dir} could not be found.\n")
+
+except IndexError:
+    print("Possibly wrong directory?")
