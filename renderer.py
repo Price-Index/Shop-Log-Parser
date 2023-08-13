@@ -173,14 +173,13 @@ try:
             version_numbers[d] = version_number
             if version_number is not None and version_number > 16:
                 versions.append(d)
-                print(f'Found directory: {d}') # Uncomment when debugging
+                # print(f'Found directory: {d}') # Uncomment when debugging
 
     # Sort the versions in descending order
     versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
         is not None else float('-inf'), v.split('.'))), reverse=True)
 
     # Set the path to the latest Minecraft .jar file
-    print(versions)
     jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
 
     print(f"\nSelecting latest version: {versions[0]}")

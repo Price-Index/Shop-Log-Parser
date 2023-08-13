@@ -54,8 +54,8 @@ parser = argparse.ArgumentParser(
     description=f'{new_version}{REPO} {version}\nCopyright (c) Vox313 and 32294'
     )
 
-# Set up argument parser
-parser.add_argument('-p', '--path', type=file_path, help='Path to the latest.log file of the directory (this path will be cached).')
+# args for resource pack path
+parser.add_argument('-p', '--path', type=file_path, help='Path to the .minecraft folder (this path will be cached).')
 parser.add_argument('-tp', '--temppath', type=file_path, help='Temporarily set the path for one run.')
 parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
 
@@ -80,15 +80,15 @@ if not os.path.exists(exports_dir):
 if args.path:
     # Save path to cache file
     with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
-        json.dump({'path': os.path.join(args.path, 'latest.log')}, f)
+        json.dump({'path': args.path}, f)
 
-    print(f'Path saved to cache: {os.path.join(args.path, "latest.log")}')
+    print(f'Path saved to cache: {args.path}')
 elif args.temppath:
     # Save temporary path to cache file
-    with open(os.path.join(cache_dir, 'temp_path_cache.json'), 'w') as f:
-        json.dump({'path': os.path.join(args.temppath, 'latest.log')}, f)
+    with open(os.path.join(cache_dir, 'temppath_cache.json'), 'w') as f:
+        json.dump({'path': args.temppath}, f)
 
-    print(f'Temporary path saved to cache: {os.path.join(args.temppath, "latest.log")}')
+    print(f'Temporary path saved to cache: {args.temppath}')
 elif args.releasepath:
     # Delete saved path from cache file
     cache_file = os.path.join(cache_dir, 'path_cache.json')
@@ -126,22 +126,20 @@ else:
 
 # test if path was given, if not use the default path based on what OS it's being ran on.
 if args.path:
-    latest_log = os.path.join(args.path, 'latest.log')
+    minecraft_dir = args.path
 elif temppath2:
-    latest_log = temppath2
+    minecraft_dir = temppath2
 elif path2:
-    latest_log = path2
+    minecraft_dir = path2
 else:
     if os.name == 'nt':  # Windows
-        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft', 'logs')
+        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft')
     elif os.name == 'posix':  # macOS and Linux
         home_dir = os.path.expanduser('~')
         if os.uname()[0] == 'Darwin':  # macOS
-            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft', 'logs')
+            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft')
         else:  # Linux
-            minecraft_dir = os.path.join(home_dir, '.minecraft', 'logs')
-
-    latest_log = os.path.join(minecraft_dir, 'latest.log')
+            minecraft_dir = os.path.join(home_dir, '.minecraft')
 
 # Create a new workbook and select the active worksheet
 wb = Workbook()
@@ -168,6 +166,8 @@ for file_name in dict_pages:
 
 #^ Read the chat log from the file
 try:
+    latest_log = os.path.join(minecraft_dir, 'logs', 'latest.log')
+
     with open(latest_log, 'r') as file:
         lines = file.readlines()
         buy = sell = None
