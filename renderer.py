@@ -143,8 +143,7 @@ else:
             minecraft_dir = os.path.join(home_dir, '.minecraft', 'versions')
 
     # Prevents ValueError of unability to convert string example: '1.19-pre3'
-    def try_int_or_float(s, full_name):
-        print(f'Processing directory: {full_name}') # Uncomment when debugging
+    def try_int_or_float(s):
         try:
             return int(s)
         except ValueError:
@@ -153,21 +152,26 @@ else:
             except ValueError:
                 return None
 
-    # Get a list of all installed Minecraft versions that start with 1.x and are greater than or equal to 1.16
+    # Get a list of all installed Minecraft versions that start with 1.x and are 1.17+
     version_numbers = {}
     versions = []
     for d in os.listdir(minecraft_dir):
         if os.path.isdir(os.path.join(minecraft_dir, d)) and d.startswith('1.'):
-            version_number = try_int_or_float(d.split('.')[1], d)
+            version_number = try_int_or_float(d.split('.')[1])
             version_numbers[d] = version_number
-            if version_number is not None and version_number >= 16:
+            if version_number is not None and version_number > 16:
                 versions.append(d)
+                # print(f'Found directory: {d}') # Uncomment when debugging
 
     # Sort the versions in descending order
-    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v] is not None else float('-inf'), v.split('.'))), reverse=True)
+    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
+        is not None else float('-inf'), v.split('.'))), reverse=True)
 
     # Set the path to the latest Minecraft .jar file
     jar_file_path = os.path.join(minecraft_dir, versions[0], f'{versions[0]}.jar')
+
+    print(f"\nSelecting latest version: {versions[0]}")
+    print(f"Extracting items from: {jar_file_path}\n")
 
     # Open the .jar file
     with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
