@@ -7,7 +7,7 @@ A logger for MythicMC shops to an excel file.
 - [Python 3.10](https://www.python.org/downloads/release/python-3100/)
 
 ```
-  pip install openpyxl
+  pip install openpyxl, requests
 ```
 
 ## Compatibility
