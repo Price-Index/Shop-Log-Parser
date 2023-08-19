@@ -412,7 +412,7 @@ num_batches = len(items_ver_plus) // batch_size
 #print(items_and_blocks_116)
 
 print(len(items_and_blocks_116))
-print(len(items_ver_plus)) # c
+print(len(items_ver_plus))
 
 #print(batch_size)
 #print(num_batches)
