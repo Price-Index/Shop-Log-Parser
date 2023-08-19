@@ -160,10 +160,76 @@ dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
 
 if args.sendrenders:
 
+    # Set the path to the .mcmeta file
+    mcmeta_path = os.path.join(minecraft_dir, "resourcepacks", new_name, "pack.mcmeta")
+
+    # Read the .mcmeta file
+    try:
+        with open(mcmeta_path, "r") as f:
+            data = json.load(f)
+
+        # Check for the release field
+        if "release" in data:
+            release_version = data["release"]
+            print(f"The release version of the resource pack is: {release_version}")
+
+        # Batch checker (updates if knowing we already had a previous batch)
+        if "batch" in data:
+            batch_version = data["batch"]
+
+            if batch_version != int: # Error handler incase someone decides to edit batch to anything except an int
+                print("Batch was not an int, defaulting to 0")
+                batch_version = -1
+
+            elif batch_version == 0:
+                print("Initial batch", batch_version)
+
+            elif batch_version == 1:
+                print("2nd batch", batch_version)
+
+            elif batch_version > 1:
+                print("We're exceeding the defaults!")
+            
+            batch = batch_version + 1
+
+        # Error handler incase someone decides to edit the batch file
+        else:
+            print("Batch was not defined, defaulting back to 0")
+            batch = 0
+
+    # Error handler if there was no previous pack.mcmeta file found
+    except FileNotFoundError:
+        print("No previous pack found, defaulting back to 0.")
+        batch = 0
+
     # Put code here to rename em into pack folder
 
-    # Moving the pack folder into minecraft directory
-    shutil.copytree(src_folder, dst_folder)
+    # Create the data for the .mcmeta file
+    
+    pack_desc = (
+    "\u00A78[\u00A75!\u00A78]\u00A77=\u00A78[\u00A75Rendering Pack\u00A78]\u00A77=\u00A78[\u00A75!\u00A78]\u00A7r\n"
+    "\u00A78[\u00A73!\u00A78]\u00A77=\u00A78[\u00A73By Vox313 & 32294\u00A78]\u00A77=\u00A78[\u00A73!\u00A78]"
+    )
+
+    print(f"The batch is {batch}")
+
+    data = {
+        "pack": {
+            "pack_format": 6,
+            "description": pack_desc
+        },
+        "release": version,
+        "batch": batch
+    }
+
+    custom_mcmeta_patch = os.path.join(src_folder, "pack.mcmeta")
+
+    # Write the data to the new .mcmeta file
+    with open(custom_mcmeta_patch, "w") as f:
+        json.dump(data, f, indent=4)
+
+    # Copying the pack folder into minecraft directory
+    shutil.copytree(src_folder, dst_folder, dirs_exist_ok=True)
 
     # Put code here to delete em from pack folder
 
@@ -174,7 +240,12 @@ if args.retrieverenders:
     # Put code here to move first batch into cache or some folder
 
     # Deletes the original pack folder from minecraft directory
-    shutil.rmtree(dst_folder)
+    try:
+        shutil.rmtree(dst_folder)
+        print("Previous pack has successfully been removed!")
+        
+    except FileNotFoundError:
+        print("File not found, try -s first!")
 
     # Put code here to output rendered images
 
