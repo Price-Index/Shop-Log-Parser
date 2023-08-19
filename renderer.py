@@ -221,13 +221,7 @@ if args.sendrenders:
     THIS PART IS GOING TO BE PURE PAIN!!!
 
 
-
     """
-
-
-
-
-
 
     # Create the data for the .mcmeta file
 
@@ -246,6 +240,7 @@ if args.sendrenders:
 
     # Copying the pack folder into minecraft directory
     shutil.copytree(src_folder, dst_folder, dirs_exist_ok=True)
+    print("Successfully made the resourcepack,\nplease go ingame and render using the https://github.com/AterAnimAvis/BlockRenderer/releases/ mod.")
 
     # Put code here to delete em from pack folder
 
@@ -266,9 +261,18 @@ if args.retrieverenders:
         if "batch" in data:
             batch_version = data["batch"]
 
+            if batch_version == 0:
+                print("You cannot retrieve renders when there are none.\nUser -s first.")
+                
+                # compare time var to earlier to find how long it took
+                end_time = time.time()
+                elapsed_time = (end_time - start_time)*1000
+                print(f"\nDone! {elapsed_time:.2f}ms")
+
+                sys.exit()
+
             # Put code here to move first batch into cache or some folder
             mod_folder = os.path.join(minecraft_dir, 'renders')
-            uncompiled = "exports/renders/uncompiled"
             
             # Find the newest folder in the source directory
             newest_folder = max(
@@ -276,8 +280,7 @@ if args.retrieverenders:
             key=os.path.getmtime
             )
 
-            dst_path = os.path.join(uncompiled, f"batch{batch_version}")
-            print(newest_folder)
+            dst_path = os.path.join(uncompiled_dir, f"batch{batch_version}")
 
             # Copy the newest folder to the destination directory
             shutil.copytree(newest_folder, dst_path)
@@ -286,11 +289,13 @@ if args.retrieverenders:
     except FileNotFoundError:
         print("No previous render found, make sure to run -s first.\nDeleting the old pack happens automatically.")
 
+        sys.exit()
+
     except FileExistsError:
 
-        print(f"Cannot render the same batch twice make sure to run -s first.\n(Or check if theres any uncompiled batches in {uncompiled})")
-
-        sys.exit()
+        print(f"Overwritting previous 'batch{batch_version}'...")
+        shutil.copytree(newest_folder, dst_path, dirs_exist_ok=True)
+        print("Overwrite successful.")
 
     # Deletes the original pack folder from minecraft directory
 
@@ -299,7 +304,7 @@ if args.retrieverenders:
         print("Previous pack has successfully been removed!")
 
     except FileNotFoundError:
-        print("File not found, try -s first!")
+        print("Previous pack could not be removed as it does not exist!")
 
     # Put code here to output rendered images
 
@@ -384,7 +389,38 @@ except FileNotFoundError:
 except IndexError:
     print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
 
+json_folder = 'resources/renderer'
+blocksjson = os.path.join(json_folder, 'blocks.json')
+itemsjson = os.path.join(json_folder, 'items.json')
+
+with open(blocksjson, 'r') as f:
+    blocks_116 = json.load(f)
+
+with open(itemsjson, 'r') as f:
+    items_116 = json.load(f)
+
+items_and_blocks_116 = [item for sublist in items_116.values() for item in sublist] + [block for sublist in blocks_116.values() for block in sublist]
+
+png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
+
+items_ver_plus = [f[:-4] for f in os.listdir(png_items) if f.endswith(".png")]
+
+batch_size = len(items_and_blocks_116)
+#num_batches = (len(items_ver_plus) + batch_size - 1) // batch_size
+num_batches = len(items_ver_plus) // batch_size
+
+#print(items_and_blocks_116)
+
+print(len(items_and_blocks_116))
+print(len(items_ver_plus))
+
+#print(batch_size)
+#print(num_batches)
+
+#print(items_and_blocks_116)
+#print(items_ver_plus)
+
 # compare time var to earlier to find how long it took
-    end_time = time.time()
-    elapsed_time = (end_time - start_time)*1000
-    print(f"\nDone! {elapsed_time:.2f}ms")
+end_time = time.time()
+elapsed_time = (end_time - start_time)*1000
+print(f"\nDone! {elapsed_time:.2f}ms")
