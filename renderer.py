@@ -6,7 +6,7 @@ MIT, see LICENSE for more details.
 """
 
 # import neccessary libraries
-import os, json, argparse, time, requests, zipfile, shutil
+import os, json, argparse, time, requests, zipfile, shutil, sys
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
@@ -61,6 +61,7 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 #! -r will be for pulling the renders back
 parser.add_argument('-s', '--sendrenders', action='store_true', help='Adds the first batch of the pack to your minecraft directory.')
 parser.add_argument('-r', '--retrieverenders', action='store_true', help='Outputs the first batch of the rendered files.')
+parser.add_argument('-d', '--defaultbatch', action='store_true', help='Sets the default batch back to 0.')
 
 # get the arguments given to the command
 args = parser.parse_args()
@@ -79,8 +80,18 @@ exports_dir = os.path.join(os.path.dirname(__file__), 'exports/renders')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
+# Create uncompiled directory if it doesn't exist
+uncompiled_dir = os.path.join(exports_dir, 'uncompiled')
+if not os.path.exists(uncompiled_dir):
+    os.makedirs(uncompiled_dir)
+
+# Create compiled directory if it doesn't exist
+compiled_dir = os.path.join(exports_dir, 'compiled')
+if not os.path.exists(compiled_dir):
+    os.makedirs(compiled_dir)
+
 # Create the output directory if it doesn't exist
-extracted_dir = os.path.join(os.path.dirname(__file__), 'cache/renderer/extracts')
+extracted_dir = os.path.join(cache_dir, 'extracts')
 if not os.path.exists(extracted_dir):
     os.makedirs(extracted_dir)
 
@@ -108,8 +119,8 @@ elif args.releasepath:
     # compare time var to earlier to find how long it took
     end_time = time.time()
     elapsed_time = (end_time - start_time)*1000
-    print(f"Done! {elapsed_time:.2f}ms")
-    exit()
+    print(f"\nDone! {elapsed_time:.2f}ms")
+    sys.exit()
 else:
     # Load temporary path from cache file if it exists
     temp_cache_file = os.path.join(cache_dir, 'temp_path_cache.json')
@@ -149,6 +160,7 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft')
 
+
 # Sending the renders and renaming em into the folder, then deleting
 
 # Custom pack name (as we are not using a .zip)
@@ -158,10 +170,17 @@ new_name = '§5§lRender §3§lPack'
 src_folder = 'resources/renderer/render_pack'
 dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
 
-if args.sendrenders:
+# Set the path to the .mcmeta file
+mcmeta_path = os.path.join(src_folder, "pack.mcmeta")
 
-    # Set the path to the .mcmeta file
-    mcmeta_path = os.path.join(minecraft_dir, "resourcepacks", new_name, "pack.mcmeta")
+pack_desc = (
+    "\u00A78[\u00A75!\u00A78]\u00A77=\u00A78[\u00A75Rendering Pack\u00A78]\u00A77=\u00A78[\u00A75!\u00A78]\u00A7r\n"
+    "\u00A78[\u00A73!\u00A78]\u00A77=\u00A78[\u00A73By Vox313 & 32294\u00A78]\u00A77=\u00A78[\u00A73!\u00A78]"
+    )
+
+pack_format = 6 # 1.16.2-rc1–1.16.5
+
+if args.sendrenders:
 
     # Read the .mcmeta file
     try:
@@ -176,19 +195,6 @@ if args.sendrenders:
         # Batch checker (updates if knowing we already had a previous batch)
         if "batch" in data:
             batch_version = data["batch"]
-
-            if batch_version != int: # Error handler incase someone decides to edit batch to anything except an int
-                print("Batch was not an int, defaulting to 0")
-                batch_version = -1
-
-            elif batch_version == 0:
-                print("Initial batch", batch_version)
-
-            elif batch_version == 1:
-                print("2nd batch", batch_version)
-
-            elif batch_version > 1:
-                print("We're exceeding the defaults!")
             
             batch = batch_version + 1
 
@@ -197,35 +203,45 @@ if args.sendrenders:
             print("Batch was not defined, defaulting back to 0")
             batch = 0
 
+    except TypeError:
+        print("Previous batch nto an int, defaulting back to 0.")
+        batch = 0
+
     # Error handler if there was no previous pack.mcmeta file found
     except FileNotFoundError:
         print("No previous pack found, defaulting back to 0.")
         batch = 0
 
+    print(f"Current batch: {batch}")
+
     # Put code here to rename em into pack folder
 
-    # Create the data for the .mcmeta file
+    """
     
-    pack_desc = (
-    "\u00A78[\u00A75!\u00A78]\u00A77=\u00A78[\u00A75Rendering Pack\u00A78]\u00A77=\u00A78[\u00A75!\u00A78]\u00A7r\n"
-    "\u00A78[\u00A73!\u00A78]\u00A77=\u00A78[\u00A73By Vox313 & 32294\u00A78]\u00A77=\u00A78[\u00A73!\u00A78]"
-    )
+    THIS PART IS GOING TO BE PURE PAIN!!!
 
-    print(f"The batch is {batch}")
+
+
+    """
+
+
+
+
+
+
+    # Create the data for the .mcmeta file
 
     data = {
         "pack": {
-            "pack_format": 6,
+            "pack_format": pack_format,
             "description": pack_desc
         },
         "release": version,
         "batch": batch
     }
 
-    custom_mcmeta_patch = os.path.join(src_folder, "pack.mcmeta")
-
     # Write the data to the new .mcmeta file
-    with open(custom_mcmeta_patch, "w") as f:
+    with open(mcmeta_path, "w") as f:
         json.dump(data, f, indent=4)
 
     # Copying the pack folder into minecraft directory
@@ -233,23 +249,91 @@ if args.sendrenders:
 
     # Put code here to delete em from pack folder
 
-    exit()
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"\nDone! {elapsed_time:.2f}ms")
+
+    sys.exit()
 
 if args.retrieverenders:
 
-    # Put code here to move first batch into cache or some folder
+    try:
+        with open(mcmeta_path, "r") as f:
+            data = json.load(f)
+
+        # Batch checker (updates if knowing we already had a previous batch)
+        if "batch" in data:
+            batch_version = data["batch"]
+
+            # Put code here to move first batch into cache or some folder
+            mod_folder = os.path.join(minecraft_dir, 'renders')
+            uncompiled = "exports/renders/uncompiled"
+            
+            # Find the newest folder in the source directory
+            newest_folder = max(
+            (os.path.join(mod_folder, d) for d in os.listdir(mod_folder) if os.path.isdir(os.path.join(mod_folder, d))),
+            key=os.path.getmtime
+            )
+
+            dst_path = os.path.join(uncompiled, f"batch{batch_version}")
+            print(newest_folder)
+
+            # Copy the newest folder to the destination directory
+            shutil.copytree(newest_folder, dst_path)
+            print("Successfully copied mod folder to the uncompiled folder.")
+
+    except FileNotFoundError:
+        print("No previous render found, make sure to run -s first.\nDeleting the old pack happens automatically.")
+
+    except FileExistsError:
+
+        print(f"Cannot render the same batch twice make sure to run -s first.\n(Or check if theres any uncompiled batches in {uncompiled})")
+
+        sys.exit()
 
     # Deletes the original pack folder from minecraft directory
+
     try:
         shutil.rmtree(dst_folder)
         print("Previous pack has successfully been removed!")
-        
+
     except FileNotFoundError:
         print("File not found, try -s first!")
 
     # Put code here to output rendered images
 
-    exit()
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"\nDone! {elapsed_time:.2f}ms")
+
+    sys.exit()
+
+# Sets back the batch int for pack.mcmeta in the render_pack folder
+if args.defaultbatch:
+
+    data = {
+        "pack": {
+            "pack_format": pack_format,
+            "description": pack_desc
+        },
+        "release": version,
+        "batch": 0
+    }
+
+    # Write the data to the new .mcmeta file
+    with open(mcmeta_path, "w") as f:
+        json.dump(data, f, indent=4)
+
+    print("Successfully set the default batch to 0.")
+
+    # compare time var to earlier to find how long it took
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)*1000
+    print(f"\nDone! {elapsed_time:.2f}ms")
+
+    sys.exit()
 
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
@@ -303,4 +387,4 @@ except IndexError:
 # compare time var to earlier to find how long it took
     end_time = time.time()
     elapsed_time = (end_time - start_time)*1000
-    print(f"Done! {elapsed_time:.2f}ms")
+    print(f"\nDone! {elapsed_time:.2f}ms")
