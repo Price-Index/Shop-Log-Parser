@@ -160,6 +160,54 @@ else:
         else:  # Linux
             minecraft_dir = os.path.join(home_dir, '.minecraft')
 
+# Prevents ValueError of unability to convert string example: '1.19-pre3'
+def try_int_or_float(s):
+    try:
+        return int(s)
+    except ValueError:
+        try:
+            return float(s)
+        except ValueError:
+            return None
+
+# Get a list of all installed Minecraft versions that start with 1.x and are 1.17+
+version_numbers = {}
+versions = []
+
+try:
+    ver_path = os.path.join(minecraft_dir, 'versions')
+
+    for d in os.listdir(ver_path):
+        if os.path.isdir(os.path.join(ver_path, d)) and d.startswith('1.'):
+            version_number = try_int_or_float(d.split('.')[1])
+            version_numbers[d] = version_number
+            if version_number is not None and version_number > 16:
+                versions.append(d)
+                # print(f'Found directory: {d}') # Uncomment when debugging
+
+    # Sort the versions in descending order
+    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
+        is not None else float('-inf'), v.split('.'))), reverse=True)
+
+    # Set the path to the latest Minecraft .jar file
+    jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
+
+    print(f"\nSelecting latest version: {versions[0]}")
+    print(f"Extracting items from: {jar_file_path}\n")
+
+    # Open the .jar file
+    with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
+        # Extract all files in the assets folder
+        for file in jar_file.namelist():
+            if file.startswith('assets/'):
+                jar_file.extract(file, extracted_dir)
+
+# throw and error if try fails
+except FileNotFoundError:
+    print(f"This Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.\n")
+
+except IndexError:
+    print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
 
 # Sending the renders and renaming em into the folder, then deleting
 
@@ -179,6 +227,31 @@ pack_desc = (
     )
 
 pack_format = 6 # 1.16.2-rc1–1.16.5
+
+json_folder = 'resources/renderer'
+blocksjson = os.path.join(json_folder, 'blocks.json')
+itemsjson = os.path.join(json_folder, 'items.json')
+
+with open(blocksjson, 'r') as f:
+    blocks_116 = json.load(f)
+
+with open(itemsjson, 'r') as f:
+    items_116 = json.load(f)
+
+items_and_blocks_116 = [item for sublist in items_116.values() for item in sublist] + [block for sublist in blocks_116.values() for block in sublist]
+
+png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
+png_blocks = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'block')
+
+items_ver_plus = [f[:-4] for f in os.listdir(png_items) if f.endswith(".png")] + [f[:-4] for f in os.listdir(png_blocks) if f.endswith(".png")]
+
+print(items_ver_plus)
+print("--------------------")
+print(items_and_blocks_116)
+
+
+#batch_size = len(items_and_blocks_116)
+#num_batches = len(items_ver_plus) // batch_size
 
 if args.sendrenders:
 
@@ -214,14 +287,7 @@ if args.sendrenders:
 
     print(f"Current batch: {batch}")
 
-    # Put code here to rename em into pack folder
-
-    """
-    
-    THIS PART IS GOING TO BE PURE PAIN!!!
-
-
-    """
+    # IDFK
 
     # Create the data for the .mcmeta file
 
@@ -307,6 +373,7 @@ if args.retrieverenders:
         print("Previous pack could not be removed as it does not exist!")
 
     # Put code here to output rendered images
+    # IDFK2
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
@@ -339,86 +406,6 @@ if args.defaultbatch:
     print(f"\nDone! {elapsed_time:.2f}ms")
 
     sys.exit()
-
-# Prevents ValueError of unability to convert string example: '1.19-pre3'
-def try_int_or_float(s):
-    try:
-        return int(s)
-    except ValueError:
-        try:
-            return float(s)
-        except ValueError:
-            return None
-
-# Get a list of all installed Minecraft versions that start with 1.x and are 1.17+
-version_numbers = {}
-versions = []
-
-try:
-    ver_path = os.path.join(minecraft_dir, 'versions')
-
-    for d in os.listdir(ver_path):
-        if os.path.isdir(os.path.join(ver_path, d)) and d.startswith('1.'):
-            version_number = try_int_or_float(d.split('.')[1])
-            version_numbers[d] = version_number
-            if version_number is not None and version_number > 16:
-                versions.append(d)
-                # print(f'Found directory: {d}') # Uncomment when debugging
-
-    # Sort the versions in descending order
-    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
-        is not None else float('-inf'), v.split('.'))), reverse=True)
-
-    # Set the path to the latest Minecraft .jar file
-    jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
-
-    print(f"\nSelecting latest version: {versions[0]}")
-    print(f"Extracting items from: {jar_file_path}\n")
-
-    # Open the .jar file
-    with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
-        # Extract all files in the assets folder
-        for file in jar_file.namelist():
-            if file.startswith('assets/'):
-                jar_file.extract(file, extracted_dir)
-
-# throw and error if try fails
-except FileNotFoundError:
-    print(f"This Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.\n")
-
-except IndexError:
-    print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
-
-json_folder = 'resources/renderer'
-blocksjson = os.path.join(json_folder, 'blocks.json')
-itemsjson = os.path.join(json_folder, 'items.json')
-
-with open(blocksjson, 'r') as f:
-    blocks_116 = json.load(f)
-
-with open(itemsjson, 'r') as f:
-    items_116 = json.load(f)
-
-items_and_blocks_116 = [item for sublist in items_116.values() for item in sublist] + [block for sublist in blocks_116.values() for block in sublist]
-
-png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
-
-items_ver_plus = [f[:-4] for f in os.listdir(png_items) if f.endswith(".png")]
-
-batch_size = len(items_and_blocks_116)
-#num_batches = (len(items_ver_plus) + batch_size - 1) // batch_size
-num_batches = len(items_ver_plus) // batch_size
-
-#print(items_and_blocks_116)
-
-print(len(items_and_blocks_116))
-print(len(items_ver_plus))
-
-#print(batch_size)
-#print(num_batches)
-
-#print(items_and_blocks_116)
-#print(items_ver_plus)
 
 # compare time var to earlier to find how long it took
 end_time = time.time()
