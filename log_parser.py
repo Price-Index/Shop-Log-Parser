@@ -9,13 +9,10 @@ MIT, see LICENSE for more details.
 # please install openpyxl using "pip3.10 install openpyxl"
 import os, json, datetime, argparse, time, requests
 from openpyxl import Workbook
+from renderer import version, OWNER, REPO
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
-
-OWNER = 'Vox314'
-REPO = 'MythicMc-Price-Index-Utils'
-version = 'v1.0.0'
 
 def get_latest_release(owner, repo):
     headers = {
