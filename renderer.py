@@ -59,7 +59,7 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 
 #! Vox finish these args, -s will be for renaming and moving to resourcepacks folder
 #! -r will be for pulling the renders back
-parser.add_argument('-s', '--sendrenders', action='store_true', help='Adds the first batch of the pack to your minecraft directory.')
+parser.add_argument('-s', '--sendrenders', action='store_true', help='Sends the specific batch to the pack in your minecraft directory.')
 parser.add_argument('-r', '--retrieverenders', action='store_true', help='Outputs the first batch of the rendered files.')
 parser.add_argument('-d', '--defaultbatch', action='store_true', help='Sets the default batch back to 0.')
 
@@ -238,20 +238,38 @@ with open(blocksjson, 'r') as f:
 with open(itemsjson, 'r') as f:
     items_116 = json.load(f)
 
-items_and_blocks_116 = [item for sublist in items_116.values() for item in sublist] + [block for sublist in blocks_116.values() for block in sublist]
+# Extract lists of blocks and items from dictionaries
+blocks_116 = blocks_116['blocklist']
+items_116 = items_116['itemlist']
 
 png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
 png_blocks = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'block')
 
-items_ver_plus = [f[:-4] for f in os.listdir(png_items) if f.endswith(".png")] + [f[:-4] for f in os.listdir(png_blocks) if f.endswith(".png")]
+# Separate processing of blocks and items without removing .png extension
+blocks_ver_plus = [f for f in os.listdir(png_blocks) if f.endswith(".png")]
+items_ver_plus = [f for f in os.listdir(png_items) if f.endswith(".png")]
 
-print(items_ver_plus)
-print("--------------------")
-print(items_and_blocks_116)
+# Find common elements for blocks and items
+common_blocks = list(set(blocks_ver_plus) & set(blocks_116))
+common_items = list(set(items_ver_plus) & set(items_116))
 
+# Define source and destination directories for blocks and items
+src_blocks_dir = png_blocks
+dst_blocks_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'block')
+src_items_dir = png_items
+dst_items_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'item')
 
-#batch_size = len(items_and_blocks_116)
-#num_batches = len(items_ver_plus) // batch_size
+# Copy common blocks from source to destination directory
+for block in common_blocks:
+    src_file = os.path.join(src_blocks_dir, block)
+    dst_file = os.path.join(dst_blocks_dir, block)
+    shutil.copy(src_file, dst_file)
+
+# Copy common items from source to destination directory
+for item in common_items:
+    src_file = os.path.join(src_items_dir, item)
+    dst_file = os.path.join(dst_items_dir, item)
+    shutil.copy(src_file, dst_file)
 
 if args.sendrenders:
 
@@ -306,7 +324,7 @@ if args.sendrenders:
 
     # Copying the pack folder into minecraft directory
     shutil.copytree(src_folder, dst_folder, dirs_exist_ok=True)
-    print("Successfully made the resourcepack,\nplease go ingame and render using the https://github.com/AterAnimAvis/BlockRenderer/releases/ mod.")
+    print("Successfully made the resourcepack,\nPlease go ingame and render using the https://github.com/AterAnimAvis/BlockRenderer/releases/ mod.")
 
     # Put code here to delete em from pack folder
 
