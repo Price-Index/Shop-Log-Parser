@@ -7,13 +7,10 @@ MIT, see LICENSE for more details.
 
 # import neccessary libraries
 import os, json, argparse, time, requests, zipfile, shutil, sys
+from metadata import version, OWNER, REPO
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
-
-OWNER = 'Vox314'
-REPO = 'MythicMC-Price-Index-Utils'
-version = 'v1.0.0'
 
 def get_latest_release(owner, repo):
     headers = {
