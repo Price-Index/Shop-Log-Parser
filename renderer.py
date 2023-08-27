@@ -218,10 +218,10 @@ try:
 
     elif not any(vars(args).values()):
         parser.print_help()
-        print("\nPlease run this script using your terminal!\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
+        print("\n\033[31mPlease run this script using your terminal!\033[0m\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
         time.sleep(5)
         input("Press any key to exit...")
-        sys.exit()
+        #sys.exit()
 
 # throw and error if try fails
 except FileNotFoundError:
@@ -272,6 +272,12 @@ items_ver_plus = [f for f in os.listdir(png_items) if f.endswith(".png")]
 # Find common elements for blocks and items
 common_blocks = list(set(blocks_ver_plus) & set(blocks_116))
 common_items = list(set(items_ver_plus) & set(items_116))
+
+# Find different elements for blocks and items
+diff_blocks = list(set(blocks_ver_plus) - set(blocks_116))
+diff_items = list(set(items_ver_plus) - set(items_116))
+print("\033[34mDifferent blocks:\033[0m", diff_blocks)
+print("\033[34mDifferent items:\033[0m", diff_items)
 
 # Define source and destination directories for blocks and items
 src_blocks_dir = png_blocks
@@ -409,7 +415,7 @@ if args.retrieverenders:
         print("Previous pack could not be removed as it does not exist!")
 
     # Put code here to output rendered images
-    # IDFK2
+    # compile em or smth idfk
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
