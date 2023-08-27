@@ -186,32 +186,40 @@ version_numbers = {}
 versions = []
 
 try:
-    ver_path = os.path.join(minecraft_dir, 'versions')
+    if args.sendrenders:
+        
+        ver_path = os.path.join(minecraft_dir, 'versions')
 
-    for d in os.listdir(ver_path):
-        if os.path.isdir(os.path.join(ver_path, d)) and d.startswith('1.'):
-            version_number = try_int_or_float(d.split('.')[1])
-            version_numbers[d] = version_number
-            if version_number is not None and version_number > 16:
-                versions.append(d)
-                # print(f'Found directory: {d}') # Uncomment when debugging
+        for d in os.listdir(ver_path):
+            if os.path.isdir(os.path.join(ver_path, d)) and d.startswith('1.'):
+                version_number = try_int_or_float(d.split('.')[1])
+                version_numbers[d] = version_number
+                if version_number is not None and version_number > 16:
+                    versions.append(d)
+                    # print(f'Found directory: {d}') # Uncomment when debugging
 
-    # Sort the versions in descending order
-    versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
-        is not None else float('-inf'), v.split('.'))), reverse=True)
+        # Sort the versions in descending order
+        versions.sort(key=lambda v: tuple(map(lambda x: version_numbers[v] if version_numbers[v]
+            is not None else float('-inf'), v.split('.'))), reverse=True)
 
-    # Set the path to the latest Minecraft .jar file
-    jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
+        # Set the path to the latest Minecraft .jar file
+        jar_file_path = os.path.join(ver_path, versions[0], f'{versions[0]}.jar')
 
-    print(f"\nSelecting latest version: {versions[0]}")
-    print(f"Extracting items from: {jar_file_path}\n")
+        print(f"\nSelecting latest version: {versions[0]}")
+        print(f"Extracting items from: {jar_file_path}\n")
 
-    # Open the .jar file
-    with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
-        # Extract all files in the assets folder
-        for file in jar_file.namelist():
-            if file.startswith('assets/'):
-                jar_file.extract(file, extracted_dir)
+        # Open the .jar file
+        with zipfile.ZipFile(jar_file_path, 'r') as jar_file:
+            # Extract all files in the assets folder
+            for file in jar_file.namelist():
+                if file.startswith('assets/'):
+                    jar_file.extract(file, extracted_dir)
+
+    else:
+        parser.print_help()
+        print("\nPlease run this script using your terminal!\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
+        time.sleep(5)
+        input("Press any key to exit...")
 
 # throw and error if try fails
 except FileNotFoundError:
