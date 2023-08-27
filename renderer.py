@@ -7,7 +7,7 @@ MIT, see LICENSE for more details.
 
 # import neccessary libraries
 import os, json, argparse, time, requests, zipfile, shutil, sys
-from metadata import version, OWNER, REPO
+from resources.metadata import version, OWNER, REPO
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
