@@ -92,6 +92,20 @@ extracted_dir = os.path.join(cache_dir, 'extracts')
 if not os.path.exists(extracted_dir):
     os.makedirs(extracted_dir)
 
+# Create assets folder with subfolders if it doesn't exist
+src_folder = 'resources/renderer/render_pack'
+assets = os.path.join(src_folder, 'assets', 'minecraft', 'textures')
+if not os.path.exists(assets):
+    os.makedirs(assets)
+
+block_dir = os.path.join(assets, 'block')
+if not os.path.exists(block_dir):
+    os.makedirs(block_dir)
+
+item_dir = os.path.join(assets, 'item')
+if not os.path.exists(item_dir):
+    os.makedirs(item_dir)
+
 # Check if --path is set
 if args.path:
     # Save path to cache file
@@ -212,7 +226,6 @@ except IndexError:
 new_name = '§5§lRender §3§lPack'
 
 # Directories for the resourcepack
-src_folder = 'resources/renderer/render_pack'
 dst_folder = os.path.join(minecraft_dir, 'resourcepacks', new_name)
 
 # Set the path to the .mcmeta file
