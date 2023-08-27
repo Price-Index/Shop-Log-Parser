@@ -20,13 +20,13 @@ def get_latest_release(owner, repo):
     try:
         response = requests.get(url, headers=headers)
     except requests.exceptions.RequestException:
-        print('Warning: Could not connect to the GitHub API. vUnknown.')
+        print('\033[31mWarning: Could not connect to the GitHub API. vUnknown.\033[0m')
         return 'vUnknown'
 
     if response.status_code == 200:
         return response.json()['tag_name']
     else:
-        print(f'An error occurred: {response.text}')
+        print(f'\033[31mAn error occurred: {response.text}\033[0m')
         return 'vUnknown'
 
 latest_version = get_latest_release(OWNER, REPO)
@@ -34,7 +34,7 @@ latest_version = get_latest_release(OWNER, REPO)
 if latest_version == version or latest_version == 'vUnknown':
     new_version = ''
 else:
-    new_version = f'{latest_version} is now available!\n'
+    new_version = f'\033[32m{latest_version} is now available!\033[0m\n\n'
 
 # Determine the Minecraft directory based on the user's operating system
 def file_path(string):
@@ -46,7 +46,7 @@ def file_path(string):
 # Arguments for the command
 parser = argparse.ArgumentParser(
     formatter_class=argparse.RawTextHelpFormatter,
-    description=f'{new_version}{REPO} {version}\nCopyright (c) Vox313 and 32294'
+    description=f'{new_version}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) Vox313 and 32294\033[0m'
     )
 
 # args for resource pack path
@@ -186,7 +186,7 @@ version_numbers = {}
 versions = []
 
 try:
-    
+
     if args.sendrenders:
         
         ver_path = os.path.join(minecraft_dir, 'versions')
@@ -221,6 +221,7 @@ try:
         print("\nPlease run this script using your terminal!\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
         time.sleep(5)
         input("Press any key to exit...")
+        sys.exit()
 
 # throw and error if try fails
 except FileNotFoundError:
