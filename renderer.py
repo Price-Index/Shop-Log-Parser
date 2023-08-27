@@ -259,18 +259,6 @@ dst_blocks_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'bl
 src_items_dir = png_items
 dst_items_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'item')
 
-# Copy common blocks from source to destination directory
-for block in common_blocks:
-    src_file = os.path.join(src_blocks_dir, block)
-    dst_file = os.path.join(dst_blocks_dir, block)
-    shutil.copy(src_file, dst_file)
-
-# Copy common items from source to destination directory
-for item in common_items:
-    src_file = os.path.join(src_items_dir, item)
-    dst_file = os.path.join(dst_items_dir, item)
-    shutil.copy(src_file, dst_file)
-
 if args.sendrenders:
 
     # Read the .mcmeta file
@@ -305,7 +293,17 @@ if args.sendrenders:
 
     print(f"Current batch: {batch}")
 
-    # IDFK
+    # Copy common blocks from source to destination directory
+    for block in common_blocks:
+        src_file = os.path.join(src_blocks_dir, block)
+        dst_file = os.path.join(dst_blocks_dir, block)
+        shutil.copy(src_file, dst_file)
+
+    # Copy common items from source to destination directory
+    for item in common_items:
+        src_file = os.path.join(src_items_dir, item)
+        dst_file = os.path.join(dst_items_dir, item)
+        shutil.copy(src_file, dst_file)
 
     # Create the data for the .mcmeta file
 
