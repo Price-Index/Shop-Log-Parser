@@ -2,8 +2,9 @@
 
 exports/
 cache/
-block/*.png
-item/*.png
+.png
 *.log
 *.xlsx
 pack.mcmeta
+
+!pack.png
