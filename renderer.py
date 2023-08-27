@@ -279,6 +279,21 @@ diff_items = list(set(items_ver_plus) - set(items_116))
 print("\033[34mDifferent blocks:\033[0m", diff_blocks)
 print("\033[34mDifferent items:\033[0m", diff_items)
 
+# Define the ID
+id = 2
+
+# Create a dictionary to store the data
+data = {}
+
+# Iterate over the common blocks and different blocks simultaneously
+for common_block, diff_block in zip(common_blocks, diff_blocks):
+    # Add the common block and its different block and ID to the data dictionary
+    data[common_block] = {diff_block: id}
+
+# Write the data to a JSON file
+with open('data.json', 'w') as f:
+    json.dump(data, f, indent=4)
+
 # Define source and destination directories for blocks and items
 src_blocks_dir = png_blocks
 dst_blocks_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'block')
