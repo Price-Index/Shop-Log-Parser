@@ -186,6 +186,7 @@ version_numbers = {}
 versions = []
 
 try:
+    
     if args.sendrenders:
         
         ver_path = os.path.join(minecraft_dir, 'versions')
@@ -215,7 +216,7 @@ try:
                 if file.startswith('assets/'):
                     jar_file.extract(file, extracted_dir)
 
-    else:
+    elif not any(vars(args).values()):
         parser.print_help()
         print("\nPlease run this script using your terminal!\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
         time.sleep(5)
@@ -306,7 +307,7 @@ if args.sendrenders:
 
     # Error handler if there was no previous pack.mcmeta file found
     except FileNotFoundError:
-        print("No previous pack found, defaulting back to 0.")
+        print("No previous pack found, defaulting back to 0 and setting things up,\nplease run again after completion!")
         batch = 0
 
     print(f"Current batch: {batch}")
