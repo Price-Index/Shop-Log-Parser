@@ -7,5 +7,7 @@ cache/
 *.log
 *.xlsx
 pack.mcmeta
+renamed_block_data.json
+renamed_item_data.json
 
 !pack.png

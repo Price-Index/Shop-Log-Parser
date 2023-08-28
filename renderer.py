@@ -68,12 +68,12 @@ path2 = None
 temppath2 = None
 
 # Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache/renderer')
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache', 'renderer')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
 # Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports/renders')
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports', 'renders')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
@@ -349,18 +349,30 @@ if args.sendrenders:
 
     elif batch >= 1:
         # Create a dictionary to store the data
-        data = {}
+        block_data = {}
 
         # Iterate over the common blocks and different blocks simultaneously
         for common_block, diff_block in zip(common_blocks, diff_blocks):
-            # Add the common block and its different block and ID to the data dictionary
-            data[common_block] = {diff_block: batch}
+            # Add the common block and its different block and batch ID to the data dictionary
+            block_data[common_block] = {diff_block: batch}
 
-        # Write the data to a JSON file
-        with open(os.path.join(exports_dir, 'renamed_data.json'), 'w') as f:
-            json.dump(data, f, indent=4)
+        # Write the block data to a JSON file
+        with open(os.path.join(json_folder, 'renamed_block_data.json'), 'w') as f:
+            json.dump(block_data, f, indent=4)
 
-        print(f"Dumped a renamed_data.json file in {os.path.join(exports_dir, 'renamed_data.json')}")
+        # Create a dictionary to store the data
+        item_data = {}
+
+        # Iterate over the common items and different items simultaneously
+        for common_item, diff_item in zip(common_items, diff_items):
+            # Add the common item and its different item and batch ID to the data dictionary
+            item_data[common_item] = {diff_item: batch}
+
+        # Write the item data to a JSON file
+        with open(os.path.join(json_folder, 'renamed_item_data.json'), 'w') as f:
+            json.dump(item_data, f, indent=4)
+
+        print(f"Made rename data files in {json_folder}.")
         
         # Delete the old previous directory
         for folder_path in [dst_blocks_dir, dst_items_dir]:
@@ -384,31 +396,31 @@ if args.sendrenders:
             dst_file = os.path.join(dst_items_dir, item)
             shutil.copy(src_file, dst_file)
 
-        with open(os.path.join(exports_dir, 'renamed_data.json'), 'r') as f:
-            data = json.load(f)
+        # Block
+        with open(os.path.join(json_folder, 'renamed_block_data.json'), 'r') as f:
+            block_data = json.load(f)
 
-        # Iterate over the items in the data
-        #x = os.path.join(dst_blocks_dir, 'brown_stained_glass.png')
-        #print(dst_blocks_dir)
-        #print(x)
-        if os.path.isfile(os.path.join(dst_blocks_dir, "brown_stained_glass.png")):
-            print("YES!")
-
-
-        for old_name, current_name_dict in data.items():
+        for old_name, current_name_dict in block_data.items():
 
             # Get the current name from the dictionary
             current_name = list(current_name_dict.keys())[0]
-            #print(f"{current_name} - {old_name}")
 
-            # Check if the file exists in dirA
             if os.path.isfile(os.path.join(dst_blocks_dir, current_name)):
                 os.rename(os.path.join(dst_blocks_dir, current_name), os.path.join(dst_blocks_dir, old_name))
                 #print(f"Block Renamed {current_name} to {old_name}") # Uncomment when debugging
-            # Check if the file exists in dirB
-            elif os.path.isfile(os.path.join(dst_items_dir, current_name)):
+
+        # Item
+        with open(os.path.join(json_folder, 'renamed_item_data.json'), 'r') as f:
+            item_data = json.load(f)
+
+        for old_name, current_name_dict in block_data.items():
+
+            # Get the current name from the dictionary
+            current_name = list(current_name_dict.keys())[0]
+
+            if os.path.isfile(os.path.join(dst_items_dir, current_name)):
                 os.rename(os.path.join(dst_items_dir, current_name), os.path.join(dst_items_dir, old_name))
-                #print(f"Item Renamed {current_name} to {old_name}") # Uncomment when debugging
+                print(f"Item Renamed {current_name} to {old_name}") # Uncomment when debugging
 
         print(f"Done batch {batch}!")
         calculate_runs()
