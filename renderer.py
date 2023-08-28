@@ -281,7 +281,14 @@ diff_items = list(set(items_ver_plus) - set(items_116))
 print("\033[34mDifferent blocks:\033[0m", len(diff_blocks))
 print("\033[34mDifferent items:\033[0m", len(diff_items))
 
+# Calculates the amount of total runs needed
 total_runs = (len(common_blocks) + len(common_items)) / (len(diff_blocks) + len(diff_items))
+
+def calculate_runs():
+    print(total_runs)
+    x = total_runs - 1
+    y = math.ceil(x)
+    print(f"Runs needed : {y}")
 
 # Define source and destination directories for blocks and items
 src_blocks_dir = png_blocks
@@ -338,6 +345,7 @@ if args.sendrenders:
             shutil.copy(src_file, dst_file)
 
         print("Done batch 1!")
+        calculate_runs()
 
     elif batch >= 1:
         # Create a dictionary to store the data
@@ -349,10 +357,13 @@ if args.sendrenders:
             data[common_block] = {diff_block: batch}
 
         # Write the data to a JSON file
-        with open('data.json', 'w') as f:
+        with open(os.path.join(exports_dir, 'renamed_data.json'), 'w') as f:
             json.dump(data, f, indent=4)
 
+        print(f"Dumped a renamed_data.json file in {os.path.join(exports_dir, 'renamed_data.json')}")
+
         print(f"Done batch {batch}!")
+        calculate_runs()
 
     else:
         print("Done something else!")
