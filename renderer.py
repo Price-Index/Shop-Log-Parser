@@ -1,13 +1,13 @@
 """
 ## MythicMC-Price-Index-Utils
 
-Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \
-MIT, see LICENSE for more details.
+Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \\
+MIT, see [LICENSE](https://github.com/Vox314/MythicMC-Price-Index-Utils/blob/master/LICENSE) for more details.
 """
 
 # import neccessary libraries
 import os, json, argparse, time, requests, zipfile, shutil, sys, math
-from resources.metadata import version, OWNER, REPO
+from resources.metadata import version, pack_format, OWNER, REPO
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
@@ -135,6 +135,7 @@ elif args.releasepath:
     
     stop_time()
     sys.exit()
+
 else:
     # Load temporary path from cache file if it exists
     temp_cache_file = os.path.join(cache_dir, 'temp_path_cache.json')
@@ -216,7 +217,6 @@ if args.reset:
     stop_time()
     sys.exit()
 
-
 # Prevents ValueError of unability to convert string example: '1.19-pre3'
 def try_int_or_float(s):
     try:
@@ -269,21 +269,16 @@ try:
         input("Press any key to exit...")
         sys.exit()
 
-# throw and error if try fails
 except FileNotFoundError:
     print(f"This Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.\n")
 
 except IndexError:
     print(f"No Minecraft versions found in {minecraft_dir}\nWrong Directory?")
 
-# Sending the renders and renaming em into the folder, then deleting
-
 pack_desc = (
     "\u00A78[\u00A75!\u00A78]\u00A77=\u00A78[\u00A75Rendering Pack\u00A78]\u00A77=\u00A78[\u00A75!\u00A78]\u00A7r\n"
     "\u00A78[\u00A73!\u00A78]\u00A77=\u00A78[\u00A73By Vox313 & 32294\u00A78]\u00A77=\u00A78[\u00A73!\u00A78]"
     )
-
-pack_format = 6 # 1.16.2-rc1–1.16.5
 
 blocksjson = os.path.join(json_folder, 'blocks.json')
 itemsjson = os.path.join(json_folder, 'items.json')
