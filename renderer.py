@@ -6,7 +6,7 @@ MIT, see LICENSE for more details.
 """
 
 # import neccessary libraries
-import os, json, argparse, time, requests, zipfile, shutil, sys
+import os, json, argparse, time, requests, zipfile, shutil, sys, math
 from resources.metadata import version, OWNER, REPO
 
 # set a var to compare to later to find how long the script took
@@ -272,27 +272,16 @@ items_ver_plus = [f for f in os.listdir(png_items) if f.endswith(".png")]
 # Find common elements for blocks and items
 common_blocks = list(set(blocks_ver_plus) & set(blocks_116))
 common_items = list(set(items_ver_plus) & set(items_116))
+print("\033[34mCommon blocks:\033[0m", len(common_blocks))
+print("\033[34mCommon items:\033[0m", len(common_items))
 
 # Find different elements for blocks and items
 diff_blocks = list(set(blocks_ver_plus) - set(blocks_116))
 diff_items = list(set(items_ver_plus) - set(items_116))
-print("\033[34mDifferent blocks:\033[0m", diff_blocks)
-print("\033[34mDifferent items:\033[0m", diff_items)
+print("\033[34mDifferent blocks:\033[0m", len(diff_blocks))
+print("\033[34mDifferent items:\033[0m", len(diff_items))
 
-# Define the ID
-id = 2
-
-# Create a dictionary to store the data
-data = {}
-
-# Iterate over the common blocks and different blocks simultaneously
-for common_block, diff_block in zip(common_blocks, diff_blocks):
-    # Add the common block and its different block and ID to the data dictionary
-    data[common_block] = {diff_block: id}
-
-# Write the data to a JSON file
-with open('data.json', 'w') as f:
-    json.dump(data, f, indent=4)
+total_runs = (len(common_blocks) + len(common_items)) / (len(diff_blocks) + len(diff_items))
 
 # Define source and destination directories for blocks and items
 src_blocks_dir = png_blocks
@@ -334,17 +323,39 @@ if args.sendrenders:
 
     print(f"Current batch: {batch}")
 
-    # Copy common blocks from source to destination directory
-    for block in common_blocks:
-        src_file = os.path.join(src_blocks_dir, block)
-        dst_file = os.path.join(dst_blocks_dir, block)
-        shutil.copy(src_file, dst_file)
+    if batch == 1:
+        
+        # Copy common blocks from source to destination directory
+        for block in common_blocks:
+            src_file = os.path.join(src_blocks_dir, block)
+            dst_file = os.path.join(dst_blocks_dir, block)
+            shutil.copy(src_file, dst_file)
 
-    # Copy common items from source to destination directory
-    for item in common_items:
-        src_file = os.path.join(src_items_dir, item)
-        dst_file = os.path.join(dst_items_dir, item)
-        shutil.copy(src_file, dst_file)
+        # Copy common items from source to destination directory
+        for item in common_items:
+            src_file = os.path.join(src_items_dir, item)
+            dst_file = os.path.join(dst_items_dir, item)
+            shutil.copy(src_file, dst_file)
+
+        print("Done batch 1!")
+
+    elif batch >= 1:
+        # Create a dictionary to store the data
+        data = {}
+
+        # Iterate over the common blocks and different blocks simultaneously
+        for common_block, diff_block in zip(common_blocks, diff_blocks):
+            # Add the common block and its different block and ID to the data dictionary
+            data[common_block] = {diff_block: batch}
+
+        # Write the data to a JSON file
+        with open('data.json', 'w') as f:
+            json.dump(data, f, indent=4)
+
+        print(f"Done batch {batch}!")
+
+    else:
+        print("Done something else!")
 
     # Create the data for the .mcmeta file
 
