@@ -1,8 +1,8 @@
 """
 ## MythicMC-Price-Index-Utils
 
-Copyright (c) [Vox313](https://github.com/Vox314) and [32294](https://github.com/32294) \\
-MIT, see [LICENSE](https://github.com/Vox314/MythicMC-Price-Index-Utils/blob/master/LICENSE) for more details.
+Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
+[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Vox314/MythicMC-Price-Index-Utils/blob/master/LICENSE) for more details.
 """
 
 # import neccessary libraries
