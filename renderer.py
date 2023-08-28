@@ -413,7 +413,7 @@ if args.sendrenders:
         with open(os.path.join(json_folder, 'renamed_item_data.json'), 'r') as f:
             item_data = json.load(f)
 
-        for old_name, current_name_dict in block_data.items():
+        for old_name, current_name_dict in item_data.items():
 
             # Get the current name from the dictionary
             current_name = list(current_name_dict.keys())[0]
