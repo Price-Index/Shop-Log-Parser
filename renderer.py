@@ -361,6 +361,16 @@ if args.sendrenders:
             json.dump(data, f, indent=4)
 
         print(f"Dumped a renamed_data.json file in {os.path.join(exports_dir, 'renamed_data.json')}")
+        
+        # Delete the old previous directory
+        for folder_path in [dst_blocks_dir, dst_items_dir]:
+            for filename in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, filename)
+                try:
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+                except Exception as e:
+                    print(f'Failed to delete {file_path}. Reason: {e}')
 
         # Copy diff blocks from source to destination directory
         for block in diff_blocks:
@@ -378,23 +388,25 @@ if args.sendrenders:
             data = json.load(f)
 
         # Iterate over the items in the data
-        for old_name, new_name_dict in data.items():
+        for old_name, old_name_dict in data.items():
             # Get the new name from the dictionary
-            old_name = list(new_name_dict.keys())[0]
+            current_name = list(old_name_dict.keys())[0]
             # Construct the old and new file paths for blocks folder
             old_path_blocks = os.path.join(dst_blocks_dir, old_name)
-            new_path_blocks = os.path.join(dst_blocks_dir, new_name)
+            new_path_blocks = os.path.join(dst_blocks_dir, current_name)
             # Check if the file exists in blocks folder
             if os.path.exists(old_path_blocks):
                 # Rename the file in blocks folder
                 os.rename(old_path_blocks, new_path_blocks)
+                print(f"Renamed {old_path_blocks} to {new_path_blocks}")
             # Construct the old and new file paths for items folder
             old_path_items = os.path.join(dst_items_dir, old_name)
-            new_path_items = os.path.join(dst_items_dir, new_name)
+            new_path_items = os.path.join(dst_items_dir, current_name)
             # Check if the file exists in items folder
             if os.path.exists(old_path_items):
                 # Rename the file in items folder
                 os.rename(old_path_items, new_path_items)
+                print(f"Renamed {old_path_items} to {new_path_items}")
 
         print(f"Done batch {batch}!")
         calculate_runs()
