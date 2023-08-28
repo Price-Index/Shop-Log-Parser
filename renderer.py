@@ -93,7 +93,7 @@ if not os.path.exists(extracted_dir):
     os.makedirs(extracted_dir)
 
 # Create assets folder with subfolders if it doesn't exist
-src_folder = 'resources/renderer/render_pack'
+src_folder = os.path.join(os.path.dirname(__file__), 'resources', 'renderer', 'render_pack')
 assets = os.path.join(src_folder, 'assets', 'minecraft', 'textures')
 if not os.path.exists(assets):
     os.makedirs(assets)
@@ -219,7 +219,7 @@ try:
     elif not any(vars(args).values()):
         parser.print_help()
         print("\n\033[31mPlease run this script using your terminal!\033[0m\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
-        time.sleep(5)
+        time.sleep(3) # Freezes terminal for x seconds
         input("Press any key to exit...")
         sys.exit()
 
@@ -248,7 +248,7 @@ pack_desc = (
 
 pack_format = 6 # 1.16.2-rc1–1.16.5
 
-json_folder = 'resources/renderer'
+json_folder = os.path.join(os.path.dirname(__file__), 'resources', 'renderer')
 blocksjson = os.path.join(json_folder, 'blocks.json')
 itemsjson = os.path.join(json_folder, 'items.json')
 
@@ -388,25 +388,27 @@ if args.sendrenders:
             data = json.load(f)
 
         # Iterate over the items in the data
-        for old_name, old_name_dict in data.items():
-            # Get the new name from the dictionary
-            current_name = list(old_name_dict.keys())[0]
-            # Construct the old and new file paths for blocks folder
-            old_path_blocks = os.path.join(dst_blocks_dir, old_name)
-            new_path_blocks = os.path.join(dst_blocks_dir, current_name)
-            # Check if the file exists in blocks folder
-            if os.path.exists(old_path_blocks):
-                # Rename the file in blocks folder
-                os.rename(old_path_blocks, new_path_blocks)
-                print(f"Renamed {old_path_blocks} to {new_path_blocks}")
-            # Construct the old and new file paths for items folder
-            old_path_items = os.path.join(dst_items_dir, old_name)
-            new_path_items = os.path.join(dst_items_dir, current_name)
-            # Check if the file exists in items folder
-            if os.path.exists(old_path_items):
-                # Rename the file in items folder
-                os.rename(old_path_items, new_path_items)
-                print(f"Renamed {old_path_items} to {new_path_items}")
+        #x = os.path.join(dst_blocks_dir, 'brown_stained_glass.png')
+        #print(dst_blocks_dir)
+        #print(x)
+        if os.path.isfile(os.path.join(dst_blocks_dir, "brown_stained_glass.png")):
+            print("YES!")
+
+
+        for old_name, current_name_dict in data.items():
+
+            # Get the current name from the dictionary
+            current_name = list(current_name_dict.keys())[0]
+            #print(f"{current_name} - {old_name}")
+
+            # Check if the file exists in dirA
+            if os.path.isfile(os.path.join(dst_blocks_dir, current_name)):
+                os.rename(os.path.join(dst_blocks_dir, current_name), os.path.join(dst_blocks_dir, old_name))
+                #print(f"Block Renamed {current_name} to {old_name}") # Uncomment when debugging
+            # Check if the file exists in dirB
+            elif os.path.isfile(os.path.join(dst_items_dir, current_name)):
+                os.rename(os.path.join(dst_items_dir, current_name), os.path.join(dst_items_dir, old_name))
+                #print(f"Item Renamed {current_name} to {old_name}") # Uncomment when debugging
 
         print(f"Done batch {batch}!")
         calculate_runs()
