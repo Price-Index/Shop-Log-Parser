@@ -362,6 +362,28 @@ if args.sendrenders:
 
         print(f"Dumped a renamed_data.json file in {os.path.join(exports_dir, 'renamed_data.json')}")
 
+        with open(os.path.join(exports_dir, 'renamed_data.json'), 'r') as f:
+            data = json.load(f)
+
+        # Iterate over the items in the data
+        for old_name, new_name_dict in data.items():
+            # Get the new name from the dictionary
+            old_name = list(new_name_dict.keys())[0]
+            # Construct the old and new file paths for blocks folder
+            old_path_blocks = os.path.join(dst_blocks_dir, old_name)
+            new_path_blocks = os.path.join(dst_blocks_dir, new_name)
+            # Check if the file exists in blocks folder
+            if os.path.exists(old_path_blocks):
+                # Rename the file in blocks folder
+                os.rename(old_path_blocks, new_path_blocks)
+            # Construct the old and new file paths for items folder
+            old_path_items = os.path.join(dst_items_dir, old_name)
+            new_path_items = os.path.join(dst_items_dir, new_name)
+            # Check if the file exists in items folder
+            if os.path.exists(old_path_items):
+                # Rename the file in items folder
+                os.rename(old_path_items, new_path_items)
+
         print(f"Done batch {batch}!")
         calculate_runs()
 
