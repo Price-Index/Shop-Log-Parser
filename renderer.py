@@ -221,7 +221,7 @@ try:
         print("\n\033[31mPlease run this script using your terminal!\033[0m\n\nUsually like this: python3 renderer.py -h\nThis might be different for your system!\n")
         time.sleep(5)
         input("Press any key to exit...")
-        #sys.exit()
+        sys.exit()
 
 # throw and error if try fails
 except FileNotFoundError:
@@ -361,6 +361,18 @@ if args.sendrenders:
             json.dump(data, f, indent=4)
 
         print(f"Dumped a renamed_data.json file in {os.path.join(exports_dir, 'renamed_data.json')}")
+
+        # Copy diff blocks from source to destination directory
+        for block in diff_blocks:
+            src_file = os.path.join(src_blocks_dir, block)
+            dst_file = os.path.join(dst_blocks_dir, block)
+            shutil.copy(src_file, dst_file)
+
+        # Copy diff items from source to destination directory
+        for item in diff_items:
+            src_file = os.path.join(src_items_dir, item)
+            dst_file = os.path.join(dst_items_dir, item)
+            shutil.copy(src_file, dst_file)
 
         with open(os.path.join(exports_dir, 'renamed_data.json'), 'r') as f:
             data = json.load(f)
