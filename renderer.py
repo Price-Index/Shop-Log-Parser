@@ -293,39 +293,49 @@ with open(itemsjson, 'r') as f:
 blocks_116 = blocks_116['blocklist']
 items_116 = items_116['itemlist']
 
-png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
-png_blocks = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'block')
+try:
+    png_items = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'item')
+    png_blocks = os.path.join(extracted_dir, 'assets', 'minecraft', 'textures', 'block')
 
-# Separate processing of blocks and items without removing .png extension
-blocks_ver_plus = [f for f in os.listdir(png_blocks) if f.endswith(".png")]
-items_ver_plus = [f for f in os.listdir(png_items) if f.endswith(".png")]
+    # Separate processing of blocks and items without removing .png extension
+    blocks_ver_plus = [f for f in os.listdir(png_blocks) if f.endswith(".png")]
+    items_ver_plus = [f for f in os.listdir(png_items) if f.endswith(".png")]
 
-# Find common elements for blocks and items
-common_blocks = list(set(blocks_ver_plus) & set(blocks_116))
-common_items = list(set(items_ver_plus) & set(items_116))
-print("\033[34mCommon blocks:\033[0m", len(common_blocks))
-print("\033[34mCommon items:\033[0m", len(common_items))
+    if os.path.exists(mcmeta_path):
+        # Find common elements for blocks and items
+        common_blocks = list(set(blocks_ver_plus) & set(blocks_116))
+        common_items = list(set(items_ver_plus) & set(items_116))
+        print("\033[34mCommon blocks:\033[0m", len(common_blocks))
+        print("\033[34mCommon items:\033[0m", len(common_items))
 
-# Find different elements for blocks and items
-diff_blocks = list(set(blocks_ver_plus) - set(blocks_116))
-diff_items = list(set(items_ver_plus) - set(items_116))
-print("\033[34mDifferent blocks:\033[0m", len(diff_blocks))
-print("\033[34mDifferent items:\033[0m", len(diff_items))
+        # Find different elements for blocks and items
+        diff_blocks = list(set(blocks_ver_plus) - set(blocks_116))
+        diff_items = list(set(items_ver_plus) - set(items_116))
+        print("\033[34mDifferent blocks:\033[0m", len(diff_blocks))
+        print("\033[34mDifferent items:\033[0m", len(diff_items))
 
-# Calculates the amount of total runs needed
-total_runs = (len(common_blocks) + len(common_items)) / (len(diff_blocks) + len(diff_items))
+        # Calculates the amount of total runs needed
+        total_runs = (len(common_blocks) + len(common_items)) / (len(diff_blocks) + len(diff_items))
 
-def calculate_runs():
-    print(total_runs)
-    x = total_runs - 1
-    y = math.ceil(x)
-    print(f"Runs needed : {y}")
+    def calculate_runs():
+        print(total_runs)
+        x = total_runs - 1
+        y = math.ceil(x)
+        print(f"Runs needed : {y}")
 
-# Define source and destination directories for blocks and items
-src_blocks_dir = png_blocks
-dst_blocks_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'block')
-src_items_dir = png_items
-dst_items_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'item')
+
+    """
+    I suppose this amount of runs needed just became irrelevant, as we can only put _top.png to _top.png and not any item / block.
+    """
+
+    # Define source and destination directories for blocks and items
+    src_blocks_dir = png_blocks
+    dst_blocks_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'block')
+    src_items_dir = png_items
+    dst_items_dir = os.path.join(src_folder, 'assets', 'minecraft', 'textures', 'item')
+
+except FileNotFoundError:
+    pass
 
 if args.sendrenders:
 
@@ -356,10 +366,14 @@ if args.sendrenders:
 
     # Error handler if there was no previous pack.mcmeta file found
     except FileNotFoundError:
-        print("No previous pack found, defaulting back to 0 and setting things up,\nplease run again after completion!")
+        print("No previous pack found, defaulting back to 0.")
         batch = 0
 
-    print(f"Current batch: {batch}")
+    if batch != 0:
+        print(f"Current batch: {batch}")
+    
+    elif batch == 0:
+        print("Setting things up...\nPlease run again after completion!")
 
     if batch == 1:
         
@@ -382,10 +396,29 @@ if args.sendrenders:
         # Create a dictionary to store the data
         block_data = {}
 
-        # Iterate over the common blocks and different blocks simultaneously
-        for common_block, diff_block in zip(common_blocks, diff_blocks):
-            # Add the common block and its different block and batch ID to the data dictionary
-            block_data[common_block] = {diff_block: batch}
+        # Create a set to keep track of matched different blocks
+        matched_diff_blocks = set()
+
+        # Define the desired block suffixes
+        block_suffixes = ['_top.png', '_bottom.png', '_side.png', '_front.png', '_back.png', '_open.png']
+
+        # Iterate over the common blocks
+        for common_block in common_blocks:
+            # Check if the common block ends with any of the desired suffixes
+            if any(common_block.endswith(suffix) for suffix in block_suffixes):
+                # Find the suffix of the common block
+                block_suffix = next(suffix for suffix in block_suffixes if common_block.endswith(suffix))
+                
+                # Find an unmatched different block that ends with the same suffix
+                diff_block = next((block for block in diff_blocks if block.endswith(block_suffix) and block not in matched_diff_blocks), None)
+            else:
+                # Find an unmatched different block that does not end with any of the desired suffixes
+                diff_block = next((block for block in diff_blocks if not any(block.endswith(suffix) for suffix in block_suffixes) and block not in matched_diff_blocks), None)
+            
+            # If an unmatched different block was found, add it to the data dictionary and mark it as matched
+            if diff_block is not None:
+                block_data[common_block] = {diff_block: batch}
+                matched_diff_blocks.add(diff_block)
 
         # Write the block data to a JSON file
         with open(os.path.join(json_folder, 'renamed_block_data.json'), 'w') as f:
@@ -427,18 +460,23 @@ if args.sendrenders:
             dst_file = os.path.join(dst_items_dir, item)
             shutil.copy(src_file, dst_file)
 
-        # Block
+        # Block ## For the --r you need to just change os.renam current_name to old_name and old _name to current_name iirc. Q1Z
         with open(os.path.join(json_folder, 'renamed_block_data.json'), 'r') as f:
             block_data = json.load(f)
 
         for old_name, current_name_dict in block_data.items():
 
+            print(old_name)
+            print(current_name_dict)
+            #print(block_data.items())
+
             # Get the current name from the dictionary
             current_name = list(current_name_dict.keys())[0]
+            print(current_name)
 
             if os.path.isfile(os.path.join(dst_blocks_dir, current_name)):
                 os.rename(os.path.join(dst_blocks_dir, current_name), os.path.join(dst_blocks_dir, old_name))
-                #print(f"Block Renamed {current_name} to {old_name}") # Uncomment when debugging
+                print(f"Block Renamed {current_name} to {old_name}") # Uncomment when debugging
 
         # Item
         with open(os.path.join(json_folder, 'renamed_item_data.json'), 'r') as f:
@@ -451,13 +489,10 @@ if args.sendrenders:
 
             if os.path.isfile(os.path.join(dst_items_dir, current_name)):
                 os.rename(os.path.join(dst_items_dir, current_name), os.path.join(dst_items_dir, old_name))
-                print(f"Item Renamed {current_name} to {old_name}") # Uncomment when debugging
+                #print(f"Item Renamed {current_name} to {old_name}") # Uncomment when debugging
 
         print(f"Done batch {batch}!")
         calculate_runs()
-
-    else:
-        print("Done something else!")
 
     # Create the data for the .mcmeta file
 
@@ -476,7 +511,8 @@ if args.sendrenders:
 
     # Copying the pack folder into minecraft directory
     shutil.copytree(src_folder, dst_folder, dirs_exist_ok=True)
-    print("Successfully made the resourcepack,\nPlease go ingame and render using the https://github.com/AterAnimAvis/BlockRenderer/releases/ mod.")
+    if batch != 0:
+        print("Successfully made the resourcepack,\nPlease go ingame and render using the https://github.com/AterAnimAvis/BlockRenderer/releases/ mod.")
 
     # Put code here to delete em from pack folder
 
@@ -517,6 +553,7 @@ if args.retrieverenders:
     except FileNotFoundError:
         print("No previous render found, make sure to run -s first.\nDeleting the old pack happens automatically.")
 
+        stop_time()
         sys.exit()
 
     except FileExistsError:
