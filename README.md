@@ -1,5 +1,17 @@
 # MythicMC shoplogger
 
+## IMPORTANT INFORMATION!
+As of 3 September 2023 I put this little note here;\
+the latest v0.1.2 release has a bug which makes it so that the sell prices are faulty.\
+This issue has been fixed in the commits yet not been released yet.\
+
+I can either make a pre release where the log parser is stable but the renderer not\
+or you can just download the latest commits of the project.
+
+Feel free to DM me on discord about this.
+
+.\
+
 A logger for MythicMC shops to an excel file.
 
 ## Requirements
