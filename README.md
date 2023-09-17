@@ -6,8 +6,8 @@ This is the Repository for custom made tools of the [MythicMC Price Index](https
 This is a pre-release of version 1.0.0\
 Meaning it may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
-- [Log parser](/LOGPARSER.md)
-- [Renderer](/RENDERER.md)
+- [Log parser](/docs/LOGPARSER.md)
+- [Renderer](/docs/RENDERER.md)
 
 ## Requirements
 

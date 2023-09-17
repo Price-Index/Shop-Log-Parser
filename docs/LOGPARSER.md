@@ -7,7 +7,7 @@ This is a pre-release of version 1.0.0\
 Meaning it may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Main](/README.md)
-- [Renderer](/RENDERER.md)
+- [Renderer](/docs/RENDERER.md)
 
 ## How to use 
 - Make sure you've joined [MythicMC](https://mythicmc.org)
