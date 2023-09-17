@@ -1,5 +1,6 @@
 {
 
+    "Enchanted Book#1z": "Fire Protection 3",
     "Enchanted Book#27": "Impaling 5",
     "Enchanted Book#28": "Impaling 4",
     "Enchanted Book#29": "Channeling",
@@ -16,6 +17,9 @@
     "Enchanted Book#3K": "Efficiency 3",
     "Enchanted Book#3k": "Lure 2",
     "Enchanted Book#3l": "Power 3",
+    "Enchanted Book#3p": "Protection 1",
+    "Enchanted Book#3J": "Depth Strider 2",
+    "Enchanted Book#6o": "Efficiency 2",
     "Enchanted Book#A": "Feather Falling 4",
     "Enchanted Book#B": "Depth Strider 3",
     "Enchanted Book#C": "Respiration 3",
@@ -25,7 +29,9 @@
     "Enchanted Book#PV": "Curse Of Vanishing",
     "Enchanted Book#3x": "Curse Of Binding",
     "Enchanted Book#3y": "Curse Of Vanishing",
+    "Enchanted Book#d8": "Smite 3",
     "Enchanted Book#g": "Unbreaking 3",
+    "Enchanted Book#gG": "Projectile Protection 3",
     "Enchanted Book#h": "Efficiency 4",
     "Enchanted Book#i": "Fortune 3",
     "Enchanted Book#j": "Silk Touch",
@@ -48,7 +54,6 @@
     "Enchanted Book#y": "Looting 2",
     "Enchanted Book#yb": "Quick Charge 2",
     "Enchanted Book#z": "Protection 3",
-    "Enchanted Book#6o": "Efficiency 2",
     "Enchanted Book#1u": "Efficiency 1"
 
 }
