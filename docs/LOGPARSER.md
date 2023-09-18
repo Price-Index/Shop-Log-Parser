@@ -11,7 +11,8 @@ Meaning it may contain bugs, if you do find some, please notify [@thevoxy](https
 
 ## How to use 
 - Make sure you've joined [MythicMC](https://mythicmc.org)
-- Go to any shop and right click the **chest** of a chestshop (only the chests you click will be logged!)
+- Go to any shop and right click the **chest** of a chestshop\
+  *(Only the chests you click will be logged!)*
 - [Run](#how-to-run) the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
 - Open the new ``./exports/latest-shopdata.xlsx`` file which contains the data. 
 
