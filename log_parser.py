@@ -290,13 +290,13 @@ try:
                 if buy != None:
 
                     output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
-                    output += "), <SHOPID>, " + buy + ", 'B');"
+                    output += "), <SHOPID>, " + str(buy) + ", 'B');"
                     ws_sql.append([output])
 
                 if sell != None:
 
                     output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
-                    output += "), <SHOPID>, " + buy + ", 'S');"
+                    output += "), <SHOPID>, " + str(sell) + ", 'S');"
                     ws_sql.append([output])
 
                 # append to data only
@@ -317,8 +317,8 @@ try:
     date = datetime.datetime.now().date()
     wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata.xlsx')
     wb.save('./exports/log_parser/latest-shopdata.xlsx')
-    wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
-    wb.save('./exports/log_parser/latest-shopdata-sql.xlsx')
+    wb_sql.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
+    wb_sql.save('./exports/log_parser/latest-shopdata-sql.xlsx')
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
