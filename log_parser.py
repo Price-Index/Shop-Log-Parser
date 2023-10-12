@@ -142,6 +142,9 @@ else:
 wb = Workbook()
 ws = wb.active
 
+wb_sql = Workbook()
+ws_sql = wb_sql.active
+
 # Set the column headers
 ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
 
@@ -282,6 +285,21 @@ try:
 
             #* add row to excel workbook if all data is present
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
+                
+                # add sql and append
+                if buy != None:
+
+                    output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
+                    output += "), <SHOPID>, " + buy + ", 'B');"
+                    ws_sql.append([output])
+
+                if sell != None:
+
+                    output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
+                    output += "), <SHOPID>, " + buy + ", 'S');"
+                    ws_sql.append([output])
+
+                # append to data only
                 ws.append([item, owner, buy, sell])
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
                 
@@ -299,6 +317,8 @@ try:
     date = datetime.datetime.now().date()
     wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata.xlsx')
     wb.save('./exports/log_parser/latest-shopdata.xlsx')
+    wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
+    wb.save('./exports/log_parser/latest-shopdata-sql.xlsx')
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
