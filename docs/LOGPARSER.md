@@ -22,7 +22,7 @@ python3 main.py -h
 ```
 
 This will show you additional info of how to use the script.\
-Depending on your OS it might be py python python3.
+**Attention!** __Depending on your OS it might be py python python3.__
 
 ## Additional information
 The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.\
