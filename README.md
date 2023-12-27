@@ -1,5 +1,5 @@
 
-# MythicMC Price Index Utils
+# MythicMC Log Parser
 
 This is the Repository for a custom made log parser of the [MythicMC Price Index](https://xnserver.xyz)
 
