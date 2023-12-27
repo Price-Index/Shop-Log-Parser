@@ -3,17 +3,15 @@
 
 This is the documentation of the Log Parser.
 
-This is a pre-release of version 1.0.0\
-Meaning it may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
+This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Main](/README.md)
-- [Renderer](/docs/RENDERER.md)
 
 ## How to use 
 - Make sure you've joined [MythicMC](https://mythicmc.org)
 - Go to any shop and right click the **chest** of a chestshop\
   *(Only the chests you click will be logged!)*
-- [Run](#how-to-run) the [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file
+- [Run](#how-to-run) the [main.py](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/main.py) file
 - Open the new ``./exports/latest-shopdata.xlsx`` file which contains the data. 
 
 ## How to run
@@ -33,7 +31,7 @@ The dictionary was only made for Non-anvilled items as those are the only items 
 ## How it works
 Everytime you boot Minecraft, the game makes a ``latest.log file`` under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\
 This ``latest.log file`` file stores all game data booting information, even chat data.\
-The [main.py](https://github.com/Vox314/MythicMC-shoplogger/blob/master/main.py) file will
+The [main.py](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/main.py) file will
 read trough all of the latest.log file and search for lines containing:\
 ``[CHAT] Shop Information:`` as a key-string
 to identify where relevant ShopInformation is shown.\

@@ -1,13 +1,11 @@
 
 # MythicMC Price Index Utils
 
-This is the Repository for custom made tools of the [MythicMC Price Index](https://xnserver.xyz)
+This is the Repository for a custom made log parser of the [MythicMC Price Index](https://xnserver.xyz)
 
-This is a pre-release of version 1.0.0\
-Meaning it may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
+This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Log parser](/docs/LOGPARSER.md)
-- [Renderer](/docs/RENDERER.md)
 
 ## Requirements
 
@@ -31,7 +29,7 @@ This project is licensed under the terms of the [MIT](https://choosealicense.com
 ```
 MIT License
 
-Copyright (c) [Vox313 https://github.com/Vox314 and 32294 https://github.com/32294]
+Copyright (c) 2023-present [Vox313 https://github.com/Vox314 and 32294 https://github.com/32294]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

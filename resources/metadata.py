@@ -1,11 +1,11 @@
 """
-MythicMC-Price-Index-Utils
+MythicMC-Log-Parser
 ==========
 
-Click [here](https://github.com/Vox314/MythicMC-Price-Index-Utils) for our GitHub page!
+Click [here](https://github.com/Vox314/MythicMC-Log-Parser) for our GitHub page!
 
 Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
-[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Vox314/MythicMC-Price-Index-Utils/blob/master/LICENSE) for more details.
+[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/LICENSE) for more details.
 
 Attributes
 ----------
@@ -36,10 +36,10 @@ OWNER = 'Vox314'
 Originally made by [Vox314](https://github.com/Vox314) in 2023
 """
 
-REPO = 'MythicMc-Price-Index-Utils'
+REPO = 'MythicMc-Log-Parser'
 
 """
-GitHub Page --> [MythicMc-Price-Index-Utils](https://github.com/Vox314/MythicMC-Price-Index-Utils)
+GitHub Page --> [MythicMc-Log-Parser](https://github.com/Vox314/MythicMC-Log-Parser)
 """
 
 version = 'v1.0.0' # Needs to keep updating!
