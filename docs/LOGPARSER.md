@@ -26,7 +26,6 @@ This will show you additional info of how to use the script.\
 > [!NOTE]
 > *Depending on your OS it might be ``py`` ``python``, ``python3`` or other.*
 
-## Additional information
 > [!IMPORTANT]
 > The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.\
 > The dictionary was only made for Non-anvilled items as those are the only items actually worth something.
