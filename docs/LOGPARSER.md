@@ -28,6 +28,7 @@ This will show you additional info of how to use the script.\
 
 > [!IMPORTANT]
 > The dictionary list may be incomplete causing unknown items (enchanted items for example) to appear.\
+
 > The dictionary was only made for Non-anvilled items as those are the only items actually worth something.
 
 ## How it works
