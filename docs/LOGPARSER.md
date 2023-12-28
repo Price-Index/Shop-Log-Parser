@@ -1,11 +1,12 @@
 
 # Log Parser
 
-This is the documentation of the Log Parser.
+This is the documentation of the [Log parser](/docs/LOGPARSER.md)
 
-This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
+> [!WARNING]
+> This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
-- [Main](/README.md)
+- [Main](/README.md) _<-- Click here to get back!_
 
 ## How to use 
 - Make sure you've joined [MythicMC](https://mythicmc.org)
