@@ -30,8 +30,8 @@ The dictionary list may be incomplete causing unknown items (enchanted items for
 The dictionary was only made for Non-anvilled items as those are the only items actually worth something.
 
 ## How it works
-Everytime you boot Minecraft, the game makes a ``latest.log file`` under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\
-This ``latest.log file`` file stores all game data booting information, even chat data.\
+Everytime you boot Minecraft, the game makes a ``latest.log`` file under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\
+This ``latest.log`` file stores all game data booting information, even chat data.\
 The [main.py](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/main.py) file will
 read trough all of the latest.log file and search for lines containing:\
 ``[CHAT] Shop Information:`` as a key-string
