@@ -7,6 +7,9 @@
 This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz). \
 You can also visit the [Developer Updates](https://github.com/Price-Index/.github/blob/main/profile/UPDATES.md) to find up to date information.
 
+> [!TIP]
+> [v1.0.1](https://github.com/Price-Index/Shop-Log-Parser/releases/tag/v1.0.1) is now available!
+
 > [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
