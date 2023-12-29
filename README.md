@@ -16,7 +16,7 @@ You can also visit the [Developer Updates](https://github.com/Price-Index/.githu
 
 ## Getting Started
 
-Download the [latest release](https://github.com/Price-Index/Shop-Log-Parser/releases) of the [Shop Log parser](/docs/SHOPLOGPARSER.md) and follow further instructions listed in [Shop Log parser](/docs/SHOPLOGPARSER.md).
+Download the [latest release](https://github.com/Price-Index/Shop-Log-Parser/releases) of the [Shop Log parser](/docs/SHOPLOGPARSER.md) and follow further instructions listed in [Shop Log parser](/docs/SHOPLOGPARSER.md). \
 You can also clone this repository if you have git installed;
 ```
 git clone https://github.com/Price-Index/Shop-Log-Parser.git
