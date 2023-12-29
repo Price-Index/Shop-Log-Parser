@@ -1,4 +1,4 @@
-# <p align="left" width="100%"> MythicMC Log Parser </p> 
+# <p align="left" width="100%"> Shop Log Parser </p> 
 <a href="https://xnserver.xyz"><img src="docs/nshoplogo.png" alt="drawing" width="300"/></a> 
 
 This is the Repository containing the [Log parser](/docs/LOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz)
