@@ -1,11 +1,10 @@
 """
-MythicMC-Log-Parser
-==========
+# Log-Parser
 
-Click [here](https://github.com/Vox314/MythicMC-Log-Parser) for our GitHub page!
+Click [here](https://github.com/Price-Index/Log-Parser) for our GitHub page!
 
 Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
-[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/LICENSE) for more details.
+[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Log-Parser/blob/master/LICENSE) for more details.
 
 Attributes
 ----------
@@ -23,36 +22,24 @@ connect to the GitHub API, for version tracking.
 ``version = string``
 This variable stores the version integer which is used to keep\\
 track of the software version.
-
-``pack_format = int``
-This variable stores the pack_format integer which corresponds\\
-to a specific minecraft version, for the generated resource pack.
 """
 
 # Metadata
-OWNER = 'Vox314'
+OWNER = 'Price-Index'
 
 """
 Originally made by [Vox314](https://github.com/Vox314) in 2023
 """
 
-REPO = 'MythicMc-Log-Parser'
+REPO = 'Log-Parser'
 
 """
-GitHub Page --> [MythicMc-Log-Parser](https://github.com/Vox314/MythicMC-Log-Parser)
+GitHub Page --> [Log-Parser](https://github.com/Price-Index/Log-Parser)
 """
 
-version = 'v1.0.0' # Needs to keep updating!
+version = 'v1.0.1' # Needs to keep updating!
 
 """
 ## Software version
-Still maintained by [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) in 2023
-"""
-
-# Configuration
-pack_format = 6
-
-"""
-``pack_format = 6``\\
-This corresponds to minecraft versions 1.16.2-rc1–1.16.5
+Still maintained by [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) in 2024
 """

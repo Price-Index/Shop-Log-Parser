@@ -12,7 +12,7 @@ This is the documentation of the [Log parser](/docs/LOGPARSER.md)
 - Make sure you've joined [MythicMC](https://mythicmc.org)
 - Go to any shop and right click the **chest** of a chestshop\
   *(Only the chests you click will be logged!)*
-- [Run](#how-to-run) the [main.py](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/main.py) file
+- [Run](#how-to-run) the [main.py](https://github.com/Price-Index/Log-Parser/blob/master/main.py) file
 - Open the new ``./exports/latest-shopdata.xlsx`` file which contains the data. 
 
 ## How to run
@@ -35,7 +35,7 @@ This will show you additional info of how to use the script.\
 ## How it works
 Everytime you boot Minecraft, the game makes a ``latest.log`` file under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\
 This ``latest.log`` file stores all game data booting information, even chat data.\
-The [main.py](https://github.com/Vox314/MythicMC-Log-Parser/blob/master/main.py) file will
+The [main.py](https://github.com/Price-Index/Log-Parser/blob/master/main.py) file will
 read trough all of the ``latest.log`` file and search for lines containing:\
 ``[CHAT] Shop Information:`` as a key-string
 to identify where relevant ShopInformation is shown.\
