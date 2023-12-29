@@ -4,7 +4,7 @@
 
 ---
 
-This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz).\ 
+This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz). \
 You can also visit the [Developer Updates](https://github.com/Price-Index/.github/blob/main/profile/UPDATES.md) to find up to date information.
 
 > [!CAUTION]
