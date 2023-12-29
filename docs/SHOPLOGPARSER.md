@@ -3,7 +3,7 @@
 
 ---
 
-This is the documentation of the [Shop Log parser](/docs/LOGPARSER.md)
+This is the documentation of the [Shop Log parser](/docs/LOGPARSER.md).
 
 > [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
@@ -26,7 +26,7 @@ Open the projects root folder in your terminal and execute the following;
 python3 main.py -h
 ```
 
-This will show you additional info of how to use the script.\
+This will show you additional info of how to use the script.
 > [!NOTE]
 > *Depending on your OS it might be ``py`` ``python``, ``python3`` or other.*
 

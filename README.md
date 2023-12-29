@@ -10,8 +10,8 @@ You can also visit the [Developer Updates](https://github.com/Price-Index/.githu
 > [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
-> [!TIP]
-> test
+- [Shop Log Parser](/docs/SHOPLOGPARSER.md) _<-- Click here to go to the Documentation!_
+
 --- 
 
 ## Getting Started
