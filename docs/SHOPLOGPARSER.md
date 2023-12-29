@@ -1,12 +1,16 @@
 
-# Shop Log Parser
+# <p align="center"> Shop Log Parser </p>
+
+---
 
 This is the documentation of the [Shop Log parser](/docs/LOGPARSER.md)
 
-> [!WARNING]
+> [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Main](/README.md) _<-- Click here to get back!_
+
+---
 
 ## How to use 
 - Make sure you've joined [MythicMC](https://mythicmc.org)
