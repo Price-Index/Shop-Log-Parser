@@ -10,7 +10,7 @@ This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) 
 <summary>Getting started</summary>
 <br>
 
-Download the [latest release](https://github.com/Price-Index/Log-Parser/releases) of the [Shop Log parser](/docs/SHOPLOGPARSER.md) and follow further instructions listed in [Shop Log parser](/docs/SHOPLOGPARSER.md).
+Download the [latest release](https://github.com/Price-Index/Shop-Log-Parser/releases) of the [Shop Log parser](/docs/SHOPLOGPARSER.md) and follow further instructions listed in [Shop Log parser](/docs/SHOPLOGPARSER.md).
 </details>
 
 <details>
