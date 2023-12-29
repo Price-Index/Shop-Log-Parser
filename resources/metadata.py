@@ -1,10 +1,10 @@
 """
-# Log-Parser
+# Shop-Log-Parser
 
-Click [here](https://github.com/Price-Index/Log-Parser) for our GitHub page!
+Click [here](https://github.com/Price-Index/Shop-Log-Parser) for our GitHub page!
 
 Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
-[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Log-Parser/blob/master/LICENSE) for more details.
+[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Shop-Log-Parser/blob/master/LICENSE) for more details.
 
 Attributes
 ----------
@@ -31,10 +31,10 @@ OWNER = 'Price-Index'
 Originally made by [Vox314](https://github.com/Vox314) in 2023
 """
 
-REPO = 'Log-Parser'
+REPO = 'Shop-Log-Parser'
 
 """
-GitHub Page --> [Log-Parser](https://github.com/Price-Index/Log-Parser)
+GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser)
 """
 
 version = 'v1.0.1' # Needs to keep updating!

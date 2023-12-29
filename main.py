@@ -1,8 +1,8 @@
 """
-## Log-Parser
+## Shop-Log-Parser
 
 Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
-[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Log-Parser/blob/master/LICENSE) for more details.
+[MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Shop-Log-Parser/blob/master/LICENSE) for more details.
 """
 
 # import neccessary libraries
@@ -64,12 +64,12 @@ path2 = None
 temppath2 = None
 
 # Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache/log_parser')
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache/shop_log_parser')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
 # Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports/log_parser')
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports/shop_log_parser')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
@@ -160,7 +160,7 @@ dict_pages = ['enchanted_books.json','potions.json','splash_potions.json','linge
 index_dictionary = {}
 
 for file_name in dict_pages:
-    with open(f"./resources/log_parser/{file_name}", 'r') as file:
+    with open(f"./resources/shop_log_parser/{file_name}", 'r') as file:
         data = json.load(file)
         index_dictionary.update(data)
 
@@ -315,10 +315,10 @@ try:
     #^ Save the workbook to a file
     customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
     date = datetime.datetime.now().date()
-    wb.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata.xlsx')
-    wb.save('./exports/log_parser/latest-shopdata.xlsx')
-    wb_sql.save(f'./exports/log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
-    wb_sql.save('./exports/log_parser/latest-shopdata-sql.xlsx')
+    wb.save(f'./exports/shop_log_parser/{date}-at-{customtime}-shopdata.xlsx')
+    wb.save('./exports/shop_log_parser/latest-shopdata.xlsx')
+    wb_sql.save(f'./exports/shop_log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
+    wb_sql.save('./exports/shop_log_parser/latest-shopdata-sql.xlsx')
 
     # compare time var to earlier to find how long it took
     end_time = time.time()

@@ -1,7 +1,7 @@
 # <p align="left" width="100%"> Shop Log Parser </p> 
 <a href="https://xnserver.xyz"><img src="docs/nshoplogo.png" alt="drawing" width="300"/></a> 
 
-This is the Repository containing the [Log parser](/docs/LOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz)
+This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) for the [MythicMC Price Index](https://xnserver.xyz)
 
 > [!WARNING]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
@@ -10,7 +10,7 @@ This is the Repository containing the [Log parser](/docs/LOGPARSER.md) for the [
 <summary>Getting started</summary>
 <br>
 
-Download the [latest release](https://github.com/Vox314/MythicMC-Log-Parser/releases) of the [Log parser](/docs/LOGPARSER.md) and follow further instructions listed in [Log parser](/docs/LOGPARSER.md).
+Download the [latest release](https://github.com/Price-Index/Log-Parser/releases) of the [Shop Log parser](/docs/SHOPLOGPARSER.md) and follow further instructions listed in [Shop Log parser](/docs/SHOPLOGPARSER.md).
 </details>
 
 <details>
@@ -28,7 +28,7 @@ pip install openpyxl, requests
 <br>
 
 ```
-git clone https://github.com/Vox314/MythicMC-Log-Parser.git
+git clone https://github.com/Price-Index/Shop-Log-Parser.git
 ```
 </details>
 </details>
