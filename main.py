@@ -64,12 +64,12 @@ path2 = None
 temppath2 = None
 
 # Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache/shop_log_parser')
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache', 'shop_log_parser')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
 # Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports/shop_log_parser')
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports', 'shop_log_parser')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
