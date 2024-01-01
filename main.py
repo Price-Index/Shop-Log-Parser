@@ -160,7 +160,7 @@ dict_pages = ['enchanted_books.json','potions.json','splash_potions.json','linge
 index_dictionary = {}
 
 for file_name in dict_pages:
-    with open(f"./resources/shop_log_parser/{file_name}", 'r') as file:
+    with open(os.path.join('resources', 'shop_log_parser', file_name), 'r') as file:
         data = json.load(file)
         index_dictionary.update(data)
 
@@ -315,10 +315,10 @@ try:
     #^ Save the workbook to a file
     customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
     date = datetime.datetime.now().date()
-    wb.save(f'./exports/shop_log_parser/{date}-at-{customtime}-shopdata.xlsx')
-    wb.save('./exports/shop_log_parser/latest-shopdata.xlsx')
-    wb_sql.save(f'./exports/shop_log_parser/{date}-at-{customtime}-shopdata-sql.xlsx')
-    wb_sql.save('./exports/shop_log_parser/latest-shopdata-sql.xlsx')
+    wb.save(os.path.join('exports', 'shop_log_parser', f'{date}-at-{customtime}-shopdata.xlsx'))
+    wb.save(os.path.join('exports', 'shop_log_parser', 'latest-shopdata.xlsx'))
+    wb_sql.save(os.path.join('exports', 'shop_log_parser', f'{date}-at-{customtime}-shopdata-sql.xlsx'))
+    wb_sql.save(os.path.join('exports', 'shop_log_parser', 'latest-shopdata-sql.xlsx'))
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
