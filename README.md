@@ -1,4 +1,6 @@
-<a href="https://xnserver.xyz"><img src="docs/priceindex.png" alt="drawing"/></a> 
+<a href="https://xnserver.xyz">
+  <img src="./docs/banner.png" alt="drawing" style="max-width: 100%; height: auto;">
+</a>
 
 # <p align="center"> Shop Log Parser </p>
 
