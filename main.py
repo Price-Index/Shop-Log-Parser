@@ -161,7 +161,7 @@ dict_pages = ['enchanted_books.json','potions.json','splash_potions.json','linge
 index_dictionary = {}
 
 for file_name in dict_pages:
-    with open(os.path.join('resources', 'shop_log_parser', file_name), 'r') as file:
+    with open(os.path.join('resources', 'dictionary', file_name), 'r') as file:
         data = json.load(file)
         index_dictionary.update(data)
 
