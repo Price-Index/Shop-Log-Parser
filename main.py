@@ -300,5 +300,5 @@ try:
     print(f"Done! {elapsed_time:.2f}ms")
 
 # throw and error if it doesn't find the log file
-except FileNotFoundError:
-    print(f"{latest_log} could not be found.")
+except FileNotFoundError as e:
+    print(f"An error occured: {e}")
