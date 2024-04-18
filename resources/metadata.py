@@ -24,7 +24,6 @@ This variable stores the version integer which is used to keep\\
 track of the software version.
 """
 
-# Metadata
 OWNER = 'Price-Index'
 
 """
@@ -37,7 +36,7 @@ REPO = 'Shop-Log-Parser'
 GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser)
 """
 
-version = 'v1.0.2' # Needs to keep updating!
+version = 'v1.0.2'
 
 """
 ## Software version

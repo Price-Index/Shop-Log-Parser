@@ -1,5 +1,3 @@
-### All files, directories or file extensions that should not be copied from development to production. ###
-
 __pycache__/
 exports/
 cache/*.log
