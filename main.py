@@ -10,6 +10,7 @@ Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com
 import os, json, datetime, argparse, time, requests
 from openpyxl import Workbook
 from resources.metadata import version, OWNER, REPO
+from decimal import *
 
 # set a var to compare to later to find how long the script took
 start_time = time.time()
@@ -240,18 +241,12 @@ try:
                 amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
                 amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
 
-                # set the item count of the shop
-                amount_buy = float(amount_buy_string)
-
                 # Split and remove the thousands separator from the strings
                 price_buy_string = buy_line.split('for ')[1]
                 price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
 
-                # set the price of the shop
-                price_buy = float(price_buy_string)
-
                 # caclulate the per item price
-                buy = price_buy / amount_buy
+                buy = Decimal(price_buy_string) / Decimal(amount_buy_string)
 
             #* get sell price, loops until it finds the line it's on 
             sell_line = None
@@ -269,35 +264,16 @@ try:
                 # Split and remove the thousands separator from the strings
                 amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
                 amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
-
-                # set the item count of the shop
-                amount_sell = float(amount_sell_string)
-
+                
                 # Split and remove the thousands separator from the strings
                 price_sell_string = sell_line.split('for ')[1]
                 price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
 
-                # set the price of the shop
-                price_sell = float(price_sell_string)
-
                 # caclulate the per item price
-                sell = price_sell / amount_sell
+                sell = Decimal(price_sell_string) / Decimal(amount_sell_sring)
 
             #* add row to excel workbook if all data is present
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
-                
-                # add sql and append
-                if buy != None:
-
-                    output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
-                    output += "), <SHOPID>, " + str(buy) + ", 'B');"
-                    ws_sql.append([output])
-
-                if sell != None:
-
-                    output = "INSERT INTO Prices VALUES ((SELECT ItemID FROM Items WHERE ItemName = '" + item + "'"
-                    output += "), <SHOPID>, " + str(sell) + ", 'S');"
-                    ws_sql.append([output])
 
                 # append to data only
                 ws.append([item, owner, buy, sell])
@@ -317,8 +293,6 @@ try:
     date = datetime.datetime.now().date()
     wb.save(os.path.join('exports', 'shop_log_parser', f'{date}-at-{customtime}-shopdata.xlsx'))
     wb.save(os.path.join('exports', 'shop_log_parser', 'latest-shopdata.xlsx'))
-    wb_sql.save(os.path.join('exports', 'shop_log_parser', f'{date}-at-{customtime}-shopdata-sql.xlsx'))
-    wb_sql.save(os.path.join('exports', 'shop_log_parser', 'latest-shopdata-sql.xlsx'))
 
     # compare time var to earlier to find how long it took
     end_time = time.time()
