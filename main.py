@@ -7,7 +7,7 @@ Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com
 
 # import neccessary libraries
 # please install openpyxl using "pip3.10 install openpyxl"
-import os, json, datetime, argparse, time, requests
+import os, json, datetime, argparse, time, requests, subprocess
 from openpyxl import Workbook
 from resources.metadata import version, OWNER, REPO
 from decimal import *
@@ -32,12 +32,17 @@ def get_latest_release(owner, repo):
         print(f'\033[31mAn error occurred: {response.text}\033[0m')
         return 'vUnknown'
 
-latest_version = get_latest_release(OWNER, REPO)
+# Arguments for the command
+parser = argparse.ArgumentParser(
+    formatter_class=argparse.RawTextHelpFormatter)
 
+latest_version = get_latest_release(OWNER, REPO)
+     
 if latest_version == version or latest_version == 'vUnknown':
     new_version = ''
 else:
     new_version = f'\033[32m{latest_version} is now available!\033[0m\n\n'
+    parser.add_argument('-u', '--update', nargs='?', help='\033[32mUpdates to a newer version.\033[0m')
 
 # Determine the Minecraft directory based on the user's operating system
 def file_path(string):
@@ -46,11 +51,7 @@ def file_path(string):
     else:
         raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
 
-# Arguments for the command
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawTextHelpFormatter,
-    description=f'{new_version}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
-    )
+parser.description=f'{new_version}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
 
 # args for resource pack path
 parser.add_argument('-p', '--path', type=file_path, help='Path to the .minecraft folder (this path will be cached).')
@@ -59,6 +60,17 @@ parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases 
 
 # get the arguments given to the command
 args = parser.parse_args()
+
+def update():
+    try:
+        subprocess.run('git', 'init')
+        # subprocess.run('git', 'pull', f'https://github.com/{OWNER}/{REPO}.git', {latest_version})
+    except Exception as e:
+        print(e)
+        exit() # TODO: make this work
+
+if args.update:
+    update()
 
 # prevents NameError
 path2 = None
