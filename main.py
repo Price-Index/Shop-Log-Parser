@@ -65,12 +65,12 @@ path2 = None
 temppath2 = None
 
 # Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache', 'shop_log_parser')
+cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
 # Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports', 'shop_log_parser')
+exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
 if not os.path.exists(exports_dir):
     os.makedirs(exports_dir)
 
@@ -270,7 +270,7 @@ try:
                 price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
 
                 # caclulate the per item price
-                sell = Decimal(price_sell_string) / Decimal(amount_sell_sring)
+                sell = Decimal(price_sell_string) / Decimal(amount_sell_string)
 
             #* add row to excel workbook if all data is present
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
