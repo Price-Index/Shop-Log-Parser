@@ -147,7 +147,7 @@ wb_sql = Workbook()
 ws_sql = wb_sql.active
 
 # Set the column headers
-ws.append(['Item', 'Owner', 'Buy:', 'Sell:'])
+ws.append(['Item', 'Price', 'Price Type', 'Owner'])
 
 # Get the characters used as decimal and thousands separators on the user's machine
 decimal_separator = '.'
@@ -276,9 +276,13 @@ try:
             if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
 
                 # append to data only
-                ws.append([item, owner, buy, sell])
+                if buy is not None:
+                    ws.append([item, buy, "B", owner])
+                if sell is not None:
+                    ws.append([item, sell, "S", owner])
+
                 shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
-                
+
                 # Uncomment when debugging
                 #print(f"The item is: {item}")
                 #print(f"The buy price is: ${buy}")
