@@ -37,7 +37,7 @@ REPO = 'Shop-Log-Parser'
 GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser)
 """
 
-version = 'v1.0.1' # Needs to keep updating!
+version = 'v2.0.0-alpha' # Needs to keep updating!
 
 """
 ## Software version
