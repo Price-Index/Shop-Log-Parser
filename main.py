@@ -166,9 +166,9 @@ class ShopLogParser:
     def run(self):
         if self.args.update:
             self.update()
-
-        self.parse_shop_logs()
-        self.save_workbook()
+        else:
+            self.parse_shop_logs()
+            self.save_workbook()
 
     def parse_shop_logs(self):
         try:
