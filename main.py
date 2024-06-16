@@ -195,6 +195,11 @@ class ShopLogParser:
                         self.ws.append([item, sell, "S", owner])
                     self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
+                    # Uncomment when debugging
+                    print(f"The item is: {item}")
+                    print(f"The buy price is: ${buy}")
+                    print(f"The sell price is: ${sell}")
+
     def extract_owner(self, line):
         return line.split('Owner: ')[1].split('\\n')[0]
 
@@ -214,11 +219,46 @@ class ShopLogParser:
         return item
 
     def extract_prices(self, lines, i):
+        thousands_separator = ','  # Define your thousands separator here
+
         buy, sell = None, None
-        if 'Buying at: ' in lines[i + 1]:
-            buy = Decimal(lines[i + 1].split('Buying at: ')[1].split(' | ')[0])
-        if 'Selling at: ' in lines[i + 2]:
-            sell = Decimal(lines[i + 2].split('Selling at: ')[1].split(' | ')[0])
+        
+        # Search for buy price
+        buy_line = None
+        for j in range(i + 1, min(i + 2001, len(lines))):
+            if '[CHAT] Shop Information:' in lines[j]:
+                break
+            if '[CHAT] Buy' in lines[j] and 'for' in lines[j]:
+                buy_line = lines[j]
+                break
+        
+        if buy_line:
+            amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
+            amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
+
+            price_buy_string = buy_line.split('for ')[1]
+            price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
+
+            buy = Decimal(price_buy_string) / Decimal(amount_buy_string)
+
+        # Search for sell price
+        sell_line = None
+        for j in range(i + 1, min(i + 2001, len(lines))):
+            if '[CHAT] Shop Information:' in lines[j]:
+                break
+            if '[CHAT] Sell' in lines[j] and 'for' in lines[j]:
+                sell_line = lines[j]
+                break
+
+        if sell_line:
+            amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
+            amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
+
+            price_sell_string = sell_line.split('for ')[1]
+            price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
+
+            sell = Decimal(price_sell_string) / Decimal(amount_sell_string)
+
         return buy, sell
 
     def save_workbook(self):
