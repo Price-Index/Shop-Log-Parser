@@ -7,7 +7,7 @@ Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com
 
 # import neccessary libraries
 # please install openpyxl using "pip3.10 install openpyxl"
-import os, json, datetime, argparse, time, requests, subprocess
+import os, json, datetime, argparse, time, requests, sys, zipfile, shutil, tempfile
 from openpyxl import Workbook
 from resources.metadata import version, OWNER, REPO
 from decimal import *
@@ -63,11 +63,54 @@ args = parser.parse_args()
 
 def update():
     try:
-        subprocess.run('git', 'init')
-        # subprocess.run('git', 'pull', f'https://github.com/{OWNER}/{REPO}.git', {latest_version})
+        # Fetch the latest release information from the GitHub API
+        response = requests.get(f'https://api.github.com/repos/{OWNER}/{REPO}/releases/{latest_version}')
+        response.raise_for_status()
+        latest_release = response.json()
+        zipball_url = latest_release['zipball_url']
+
+        # Download the zipball
+        zipball_response = requests.get(zipball_url, stream=True)
+        zipball_response.raise_for_status()
+
+        # Create a temporary directory
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            zip_path = os.path.join(tmpdirname, 'latest_release.zip')
+
+            # Write zipball to a temporary file
+            with open(zip_path, 'wb') as f:
+                for chunk in zipball_response.iter_content(chunk_size=8192):
+                    f.write(chunk)
+
+            # Extract the zipball
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(tmpdirname)
+
+            # Find the extracted directory (GitHub adds a prefix to the directory name)
+            extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
+
+            # Replace the current script with the new one
+            script_name = os.path.basename(__file__)
+            new_script_path = os.path.join(extracted_dir, script_name)
+            if os.path.exists(new_script_path):
+                shutil.copy2(new_script_path, script_name)
+            else:
+                print(f"Updated script not found in the release: {new_script_path}")
+                sys.exit(1)
+
+        # Restart the script
+        print("Update complete. Restarting the script...")
+        os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
+
+    except requests.RequestException as e:
+        print(f"An error occurred while fetching the release: {e}")
+        sys.exit(1)
+    except zipfile.BadZipFile as e:
+        print(f"An error occurred while extracting the release: {e}")
+        sys.exit(1)
     except Exception as e:
-        print(e)
-        exit() # TODO: make this work
+        print(f"An unexpected error occurred: {e}")
+        sys.exit(1)
 
 if args.update:
     update()
