@@ -90,7 +90,7 @@ class ShopLogParser:
         self.ws = self.wb.active
         self.wb_sql = Workbook()
         self.ws_sql = self.wb_sql.active
-        self.ws.append(['Item', 'Price', 'Price Type', 'Owner'])
+        self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost'])
 
     def load_cache_paths(self):
         self.path2 = None
@@ -208,7 +208,7 @@ class ShopLogParser:
         return line.split('Item: ')[1].split('\n')[0]
 
     def resolve_item_name(self, item):
-        dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json']
+        dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json', 'fireworks.json']
         index_dictionary = {}
         for file_name in dict_pages:
             with open(os.path.join('resources', 'dictionary', file_name), 'r') as file:
