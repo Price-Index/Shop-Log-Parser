@@ -194,7 +194,8 @@ class ShopLogParser:
                     if sell is not None:
                         self.ws.append([item, sell, "S", owner])
                     self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
-
+                    
+                    # TODO: remove in future
                     # Uncomment when debugging
                     #print(f"The item is: {item}")
                     #print(f"The buy price is: ${buy}")
