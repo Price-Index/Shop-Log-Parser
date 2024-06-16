@@ -16,7 +16,7 @@ import zipfile
 import shutil
 import tempfile
 from openpyxl import Workbook
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from resources.metadata import version, OWNER, REPO
 
 def get_latest_release(owner, repo):
@@ -36,16 +36,18 @@ def get_latest_release(owner, repo):
         return 'vUnknown'
 
 class ShopLogParser:
-    def __init__(self):
+    def __init__(self, line_limit=2000, thousands_separator=','):
         self.start_time = time.time()
         self.args = self.parse_arguments()
+        self.line_limit = line_limit
+        self.thousands_separator = thousands_separator
         self.shop_info = []
         self.cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
         self.exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
-        self.temppath2 = None  # Initialize temppath2
-        self.path2 = None      # Initialize path2
+        self.temppath2 = None # Initialize temppath2
+        self.path2 = None     # Initialize path2
         self.ensure_directories()
-        self.load_cache_paths()  # Load cache paths before determining the Minecraft directory
+        self.load_cache_paths() # Load cache paths before determining the Minecraft directory
         self.minecraft_dir = self.determine_minecraft_directory()
         self.setup_workbook()
         self.run()
@@ -184,25 +186,35 @@ class ShopLogParser:
         for i, line in enumerate(lines):
             if '[CHAT] Shop Information:' in line:
                 owner = self.extract_owner(line)
+                stock = self.extract_stock(line)
                 item = self.extract_item(line)
                 item = self.resolve_item_name(item)
+                repair_cost = self.extract_repair_costs(lines, i)
                 buy, sell = self.extract_prices(lines, i)
 
-                if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in self.shop_info):
+                if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell and info['stock'] == stock and info['repair_cost'] == repair_cost for info in self.shop_info):
                     if buy is not None:
-                        self.ws.append([item, buy, "B", owner])
+                        self.ws.append([item, buy, "B", owner, stock, repair_cost])
                     if sell is not None:
-                        self.ws.append([item, sell, "S", owner])
-                    self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
+                        self.ws.append([item, sell, "S", owner, stock, repair_cost])
+                    # Append detailed dictionary to shop_info in order to prevent duplicates
+                    self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell, 'stock': stock, 'repair_cost': repair_cost})
                     
                     # TODO: remove in future
                     # Uncomment when debugging
-                    #print(f"The item is: {item}")
+                    #print(f"The owner is: {owner}")
+                    print(f"The item is: {item}")
                     #print(f"The buy price is: ${buy}")
                     #print(f"The sell price is: ${sell}")
+                    #print(f"The stock is: {stock}")
+                    print(f"The repair cost is: {repair_cost}")
+                    print("---")
 
     def extract_owner(self, line):
         return line.split('Owner: ')[1].split('\\n')[0]
+    
+    def extract_stock(self, line):
+        return line.split('Stock: ')[1].split('\\n')[0]
 
     def extract_item(self, line):
         return line.split('Item: ')[1].split('\n')[0]
@@ -215,18 +227,30 @@ class ShopLogParser:
                 data = json.load(file)
                 index_dictionary.update(data)
 
-        if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#')):
+        if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
             return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
         return item
+    
+    def extract_repair_costs(self, lines, i):
+        repair_cost = None
+        
+        # Search for repair cost
+        for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
+            if '[CHAT] Shop Information:' in lines[j]:
+                break
+            if '[CHAT] Repair Cost:' in lines[j]:
+                repair_cost_line = lines[j]
+                repair_cost = Decimal(repair_cost_line.split(':')[-1].strip())
+                break
+        
+        return repair_cost
 
     def extract_prices(self, lines, i):
-        thousands_separator = ','  # Define thousands separator here
-
         buy, sell = None, None
         
         # Search for buy price
         buy_line = None
-        for j in range(i + 1, min(i + 2001, len(lines))):
+        for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
             if '[CHAT] Shop Information:' in lines[j]:
                 break
             if '[CHAT] Buy' in lines[j] and 'for' in lines[j]:
@@ -235,16 +259,16 @@ class ShopLogParser:
         
         if buy_line:
             amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
-            amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
+            amount_buy_string = amount_buy_string.replace(self.thousands_separator, '').replace('\n', '')
 
             price_buy_string = buy_line.split('for ')[1]
-            price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
+            price_buy_string = price_buy_string.replace(self.thousands_separator, '').replace('\n', '')
 
             buy = Decimal(price_buy_string) / Decimal(amount_buy_string)
 
         # Search for sell price
         sell_line = None
-        for j in range(i + 1, min(i + 2001, len(lines))):
+        for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
             if '[CHAT] Shop Information:' in lines[j]:
                 break
             if '[CHAT] Sell' in lines[j] and 'for' in lines[j]:
@@ -253,10 +277,10 @@ class ShopLogParser:
 
         if sell_line:
             amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
-            amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
+            amount_sell_string = amount_sell_string.replace(self.thousands_separator, '').replace('\n', '')
 
             price_sell_string = sell_line.split('for ')[1]
-            price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
+            price_sell_string = price_sell_string.replace(self.thousands_separator, '').replace('\n', '')
 
             sell = Decimal(price_sell_string) / Decimal(amount_sell_string)
 
