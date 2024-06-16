@@ -226,7 +226,7 @@ class ShopLogParser:
         file_path = os.path.join(self.exports_dir, f'shop_information {date}.xlsx')
         self.wb.save(file_path)
         self.wb_sql.save(file_path.replace('shop_information', 'shop_information_sql'))
-        print(f'Elapsed Time: {time.time() - self.start_time} seconds')
+        print(f'Elapsed Time: {(time.time() - self.start_time)*1000:.2f}ms')
 
 if __name__ == "__main__":
     ShopLogParser()
