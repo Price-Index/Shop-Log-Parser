@@ -196,9 +196,9 @@ class ShopLogParser:
                     self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
                     # Uncomment when debugging
-                    print(f"The item is: {item}")
-                    print(f"The buy price is: ${buy}")
-                    print(f"The sell price is: ${sell}")
+                    #print(f"The item is: {item}")
+                    #print(f"The buy price is: ${buy}")
+                    #print(f"The sell price is: ${sell}")
 
     def extract_owner(self, line):
         return line.split('Owner: ')[1].split('\\n')[0]
