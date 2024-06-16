@@ -158,6 +158,7 @@ class ShopLogParser:
                     sys.exit(1)
 
             print("Update complete. Restarting the script...")
+            sys.argv = [sys.argv[0], '--help']
             os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
         except Exception as e:
             print(f"An error occurred during update: {e}")
