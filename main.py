@@ -16,7 +16,7 @@ import zipfile
 import shutil
 import tempfile
 from openpyxl import Workbook
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from resources.metadata import version, OWNER, REPO
 
 def get_latest_release(owner, repo):
@@ -94,7 +94,7 @@ class ShopLogParser:
         self.ws_sql = self.wb_sql.active
         self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost'])
 
-    def load_cache_paths(self):
+    def load_cache_paths(self): # TODO: some kind of issue with temppath not going away? Also why temppath2??!
         self.path2 = None
         self.temppath2 = None
         if self.args.path:
@@ -207,7 +207,7 @@ class ShopLogParser:
                     #print(f"The buy price is: ${buy}")
                     #print(f"The sell price is: ${sell}")
                     #print(f"The stock is: {stock}")
-                    print(f"The repair cost is: {repair_cost}")
+                    #print(f"The repair cost is: {repair_cost}")
                     print("---")
 
     def extract_owner(self, line):
@@ -232,7 +232,7 @@ class ShopLogParser:
         return item
     
     def extract_repair_costs(self, lines, i):
-        repair_cost = None
+        repair_cost = 0
         
         # Search for repair cost
         for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
