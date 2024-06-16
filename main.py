@@ -1,363 +1,231 @@
 """
 ## Shop-Log-Parser
 
-Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294) \\
+Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com/32294)
 [MIT](https://choosealicense.com/licenses/mit/), see [LICENSE](https://github.com/Price-Index/Shop-Log-Parser/blob/master/LICENSE) for more details.
 """
 
-# import neccessary libraries
-# please install openpyxl using "pip3.10 install openpyxl"
-import os, json, datetime, argparse, time, requests, sys, zipfile, shutil, tempfile
+import os
+import json
+import datetime
+import argparse
+import time
+import requests
+import sys
+import zipfile
+import shutil
+import tempfile
 from openpyxl import Workbook
+from decimal import Decimal
 from resources.metadata import version, OWNER, REPO
-from decimal import *
-
-# set a var to compare to later to find how long the script took
-start_time = time.time()
 
 def get_latest_release(owner, repo):
+    """
+    Fetches the latest release tag from the GitHub API.
+    """
     headers = {
         'Accept': 'application/vnd.github+json'
     }
     url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
     try:
         response = requests.get(url, headers=headers)
-    except requests.exceptions.RequestException:
-        print('\033[31mWarning: Could not connect to the GitHub API. vUnknown.\033[0m')
-        return 'vUnknown'
-
-    if response.status_code == 200:
-        return response.json()['tag_name']
-    else:
-        print(f'\033[31mAn error occurred: {response.text}\033[0m')
-        return 'vUnknown'
-
-# Arguments for the command
-parser = argparse.ArgumentParser(
-    formatter_class=argparse.RawTextHelpFormatter)
-
-latest_version = get_latest_release(OWNER, REPO)
-     
-if latest_version == version or latest_version == 'vUnknown':
-    new_version = ''
-else:
-    new_version = f'\033[32m{latest_version} is now available!\033[0m\n\n'
-    parser.add_argument('-u', '--update', nargs='?', help='\033[32mUpdates to a newer version.\033[0m')
-
-# Determine the Minecraft directory based on the user's operating system
-def file_path(string):
-    if os.path.isdir(string):
-        return string
-    else:
-        raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
-
-parser.description=f'{new_version}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
-
-# args for resource pack path
-parser.add_argument('-p', '--path', type=file_path, help='Path to the .minecraft folder (this path will be cached).')
-parser.add_argument('-tp', '--temppath', type=file_path, help='Temporarily set the path for one run.')
-parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
-
-# get the arguments given to the command
-args = parser.parse_args()
-
-def update():
-    try:
-        # Fetch the latest release information from the GitHub API
-        response = requests.get(f'https://api.github.com/repos/{OWNER}/{REPO}/releases/{latest_version}')
         response.raise_for_status()
-        latest_release = response.json()
-        zipball_url = latest_release['zipball_url']
-
-        # Download the zipball
-        zipball_response = requests.get(zipball_url, stream=True)
-        zipball_response.raise_for_status()
-
-        # Create a temporary directory
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            zip_path = os.path.join(tmpdirname, 'latest_release.zip')
-
-            # Write zipball to a temporary file
-            with open(zip_path, 'wb') as f:
-                for chunk in zipball_response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-
-            # Extract the zipball
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(tmpdirname)
-
-            # Find the extracted directory (GitHub adds a prefix to the directory name)
-            extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
-
-            # Replace the current script with the new one
-            script_name = os.path.basename(__file__)
-            new_script_path = os.path.join(extracted_dir, script_name)
-            if os.path.exists(new_script_path):
-                shutil.copy2(new_script_path, script_name)
-            else:
-                print(f"Updated script not found in the release: {new_script_path}")
-                sys.exit(1)
-
-        # Restart the script
-        print("Update complete. Restarting the script...")
-        os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
-
+        return response.json()['tag_name']
     except requests.RequestException as e:
-        print(f"An error occurred while fetching the release: {e}")
-        sys.exit(1)
-    except zipfile.BadZipFile as e:
-        print(f"An error occurred while extracting the release: {e}")
-        sys.exit(1)
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        sys.exit(1)
+        print(f'\033[31mWarning: Could not connect to the GitHub API. vUnknown. Error: {e}\033[0m')
+        return 'vUnknown'
 
-if args.update:
-    update()
+class ShopLogParser:
+    def __init__(self):
+        self.start_time = time.time()
+        self.args = self.parse_arguments()
+        self.shop_info = []
+        self.cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+        self.exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
+        self.temppath2 = None  # Initialize temppath2
+        self.path2 = None      # Initialize path2
+        self.ensure_directories()
+        self.load_cache_paths()  # Load cache paths before determining the Minecraft directory
+        self.minecraft_dir = self.determine_minecraft_directory()
+        self.setup_workbook()
+        self.run()
 
-# prevents NameError
-path2 = None
-temppath2 = None
+    def parse_arguments(self):
+        parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+        latest_version = get_latest_release(OWNER, REPO)
+        new_version_msg = f'\033[32m{latest_version} is now available!\033[0m\n\n' if latest_version != version else ''
+        parser.description = f'{new_version_msg}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
+        
+        if latest_version != version and latest_version != 'vUnknown':
+            parser.add_argument('-u', '--update', nargs='?', const='latest', help='\033[32mUpdates to a newer version.\033[0m')
 
-# Create cache directory if it doesn't exist
-cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
-if not os.path.exists(cache_dir):
-    os.makedirs(cache_dir)
+        parser.add_argument('-p', '--path', type=self.file_path, help='Path to the .minecraft folder (this path will be cached).')
+        parser.add_argument('-tp', '--temppath', type=self.file_path, help='Temporarily set the path for one run.')
+        parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
+        return parser.parse_args()
 
-# Create exports directory if it doesn't exist
-exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
-if not os.path.exists(exports_dir):
-    os.makedirs(exports_dir)
+    def ensure_directories(self):
+        os.makedirs(self.cache_dir, exist_ok=True)
+        os.makedirs(self.exports_dir, exist_ok=True)
 
-# Check if --path is set
-if args.path:
-    # Save path to cache file
-    with open(os.path.join(cache_dir, 'path_cache.json'), 'w') as f:
-        json.dump({'path': args.path}, f)
+    def determine_minecraft_directory(self):
+        if self.args.path:
+            return self.args.path
+        elif self.temppath2:
+            return self.temppath2
+        elif self.path2:
+            return self.path2
+        else:
+            if os.name == 'nt':
+                return os.path.join(os.environ['APPDATA'], '.minecraft')
+            else:
+                home_dir = os.path.expanduser('~')
+                if os.uname()[0] == 'Darwin':
+                    return os.path.join(home_dir, 'Library', 'Application Support', 'minecraft')
+                else:
+                    return os.path.join(home_dir, '.minecraft')
 
-    print(f'Path saved to cache: {args.path}')
-elif args.temppath:
-    # Save temporary path to cache file
-    with open(os.path.join(cache_dir, 'temppath_cache.json'), 'w') as f:
-        json.dump({'path': args.temppath}, f)
+    def setup_workbook(self):
+        self.wb = Workbook()
+        self.ws = self.wb.active
+        self.wb_sql = Workbook()
+        self.ws_sql = self.wb_sql.active
+        self.ws.append(['Item', 'Price', 'Price Type', 'Owner'])
 
-    print(f'Temporary path saved to cache: {args.temppath}')
-elif args.releasepath:
-    # Delete saved path from cache file
-    cache_file = os.path.join(cache_dir, 'path_cache.json')
-    if os.path.exists(cache_file):
-        os.remove(cache_file)
+    def load_cache_paths(self):
+        self.path2 = None
+        self.temppath2 = None
+        if self.args.path:
+            self.save_cache_path(self.args.path, 'path_cache.json')
+        elif self.args.temppath:
+            self.save_cache_path(self.args.temppath, 'temppath_cache.json')
+        elif self.args.releasepath:
+            self.release_cache_path('path_cache.json')
+        else:
+            self.temppath2 = self.load_cache_path('temppath_cache.json')
+            self.path2 = self.load_cache_path('path_cache.json')
 
-    print(f'Saved path released!')
-    
-    # compare time var to earlier to find how long it took
-    end_time = time.time()
-    elapsed_time = (end_time - start_time)*1000
-    print(f"Done! {elapsed_time:.2f}ms")
-    exit()
-else:
-    # Load temporary path from cache file if it exists
-    temp_cache_file = os.path.join(cache_dir, 'temp_path_cache.json')
-    if os.path.exists(temp_cache_file):
-        with open(temp_cache_file, 'r') as f:
-            cache_data = json.load(f)
-            temppath2 = cache_data['path']
+    def save_cache_path(self, path, cache_file):
+        with open(os.path.join(self.cache_dir, cache_file), 'w') as f:
+            json.dump({'path': path}, f)
+        print(f'Path saved to cache: {path}')
 
-        # Delete temporary cache file
-        os.remove(temp_cache_file)
+    def release_cache_path(self, cache_file):
+        cache_file_path = os.path.join(self.cache_dir, cache_file)
+        if os.path.exists(cache_file_path):
+            os.remove(cache_file_path)
+        print(f'Saved path released!')
 
-        print(f'Temporary path loaded from cache: {temppath2}')
-    else:
-        # Load permanent path from cache file if it exists
-        perm_cache_file = os.path.join(cache_dir, 'path_cache.json')
-        if os.path.exists(perm_cache_file):
-            with open(perm_cache_file, 'r') as f:
+    def load_cache_path(self, cache_file):
+        cache_file_path = os.path.join(self.cache_dir, cache_file)
+        if os.path.exists(cache_file_path):
+            with open(cache_file_path, 'r') as f:
                 cache_data = json.load(f)
-                path2 = cache_data['path']
+                return cache_data['path']
+        return None
 
-            print(f'Permanent path loaded from cache: {path2}')
+    def file_path(self, string):
+        if os.path.isdir(string):
+            return string
+        else:
+            raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
 
-# test if path was given, if not use the default path based on what OS it's being ran on.
-if args.path:
-    minecraft_dir = args.path
-elif temppath2:
-    minecraft_dir = temppath2
-elif path2:
-    minecraft_dir = path2
-else:
-    if os.name == 'nt':  # Windows
-        minecraft_dir = os.path.join(os.environ['APPDATA'], '.minecraft')
-    elif os.name == 'posix':  # macOS and Linux
-        home_dir = os.path.expanduser('~')
-        if os.uname()[0] == 'Darwin':  # macOS
-            minecraft_dir = os.path.join(home_dir, 'Library', 'Application Support', 'minecraft')
-        else:  # Linux
-            minecraft_dir = os.path.join(home_dir, '.minecraft')
+    def update(self):
+        print("Updating...")
+        try:
+            response = requests.get(f'https://api.github.com/repos/{OWNER}/{REPO}/releases/latest')
+            response.raise_for_status()
+            latest_release = response.json()
+            zipball_url = latest_release['zipball_url']
 
-# Create a new workbook and select the active worksheet
-wb = Workbook()
-ws = wb.active
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                zip_path = os.path.join(tmpdirname, 'latest_release.zip')
+                with open(zip_path, 'wb') as f:
+                    for chunk in requests.get(zipball_url, stream=True).iter_content(chunk_size=8192):
+                        f.write(chunk)
 
-wb_sql = Workbook()
-ws_sql = wb_sql.active
+                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(tmpdirname)
 
-# Set the column headers
-ws.append(['Item', 'Price', 'Price Type', 'Owner'])
+                extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
+                script_name = os.path.basename(__file__)
+                new_script_path = os.path.join(extracted_dir, script_name)
 
-# Get the characters used as decimal and thousands separators on the user's machine
-decimal_separator = '.'
-thousands_separator = ','
+                if os.path.exists(new_script_path):
+                    shutil.copy2(new_script_path, script_name)
+                else:
+                    print(f"Updated script not found in the release: {new_script_path}")
+                    sys.exit(1)
 
-# Shop info var for loop
-shop_info = []
+            print("Update complete. Restarting the script...")
+            os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
+        except Exception as e:
+            print(f"An error occurred during update: {e}")
+            sys.exit(1)
 
-# Dictionary #?? ids into human readable names
-dict_pages = ['enchanted_books.json','potions.json','splash_potions.json','lingering_potions.json','tipped_arrows.json','heads.json'] # dictionary pages (you can add more in the future)
-index_dictionary = {}
+    def run(self):
+        if self.args.update:
+            self.update()
 
-for file_name in dict_pages:
-    with open(os.path.join('resources', 'dictionary', file_name), 'r') as file:
-        data = json.load(file)
-        index_dictionary.update(data)
+        self.parse_shop_logs()
+        self.save_workbook()
 
-#^ Read the chat log from the file
-try:
-    latest_log = os.path.join(minecraft_dir, 'logs', 'latest.log')
+    def parse_shop_logs(self):
+        try:
+            latest_log = os.path.join(self.minecraft_dir, 'logs', 'latest.log')
+            with open(latest_log, 'r') as file:
+                lines = file.readlines()
+                self.process_log_lines(lines)
+        except FileNotFoundError as e:
+            print(f"An error occurred: {e}")
 
-    with open(latest_log, 'r') as file:
-        lines = file.readlines()
-        buy = sell = None
+    def process_log_lines(self, lines):
+        for i, line in enumerate(lines):
+            if '[CHAT] Shop Information:' in line:
+                owner = self.extract_owner(line)
+                item = self.extract_item(line)
+                item = self.resolve_item_name(item)
+                buy, sell = self.extract_prices(lines, i)
 
-    #^ runs when fines the correct shop info header
-    for i, line in enumerate(lines):
-        if '[CHAT] Shop Information:' in line:
+                if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in self.shop_info):
+                    if buy is not None:
+                        self.ws.append([item, buy, "B", owner])
+                    if sell is not None:
+                        self.ws.append([item, sell, "S", owner])
+                    self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
 
-            #* get owner of the shop
-            owner = line.split('Owner: ')[1].split('\\n')[0]
+    def extract_owner(self, line):
+        return line.split('Owner: ')[1].split('\\n')[0]
 
-            #* get stock of shop
-            # stock = line.split('Stock: ')[1].split('\\n')[0]
+    def extract_item(self, line):
+        return line.split('Item: ')[1].split('\n')[0]
 
-            #* get item name
-            item = line.split('Item: ')[1].split('\n')[0]
+    def resolve_item_name(self, item):
+        dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json']
+        index_dictionary = {}
+        for file_name in dict_pages:
+            with open(os.path.join('resources', 'dictionary', file_name), 'r') as file:
+                data = json.load(file)
+                index_dictionary.update(data)
 
-            #~ Look if the item name starts with Enchanted Book, if yes make it an enchantment, if yes but no, then unknown, if no; then just pass by.
-            #~ (For potions, enchanted books, and music discs.)
-            if item.startswith('Enchanted Book#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Enchanted Book: ' + item
+        if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#')):
+            return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
+        return item
 
-            if item.startswith('Potion#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Potion: ' + item
+    def extract_prices(self, lines, i):
+        buy, sell = None, None
+        if 'Buying at: ' in lines[i + 1]:
+            buy = Decimal(lines[i + 1].split('Buying at: ')[1].split(' | ')[0])
+        if 'Selling at: ' in lines[i + 2]:
+            sell = Decimal(lines[i + 2].split('Selling at: ')[1].split(' | ')[0])
+        return buy, sell
 
-            if item.startswith('Splash Potion#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Splash Potion: ' + item
+    def save_workbook(self):
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+        file_path = os.path.join(self.exports_dir, f'shop_information {date}.xlsx')
+        self.wb.save(file_path)
+        self.wb_sql.save(file_path.replace('shop_information', 'shop_information_sql'))
+        print(f'Elapsed Time: {time.time() - self.start_time} seconds')
 
-            if item.startswith('Lingering Potion#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Lingering Potion: ' + item
-
-            if item.startswith('Tipped Arrow#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Tipped Arrow: ' + item
-
-            if item.startswith('Player Head#'):
-                try:
-                    item = index_dictionary[item]
-                except KeyError:
-                    item = 'ERROR Unknown Head: ' + item
-
-            #* get buy price, loops until it finds the line it's on 
-            buy_line = None
-            for j in range(i + 1, min(i + 2001, len(lines))):
-                if '[CHAT] Shop Information:' in lines[j]:
-                    # We have reached the end of the current item, stop searching for buy price information
-                    break
-                if '[CHAT] Buy' in lines[j] and 'for' in lines[j]:
-                    buy_line = lines[j]
-                    break
-
-            # if the line was found, process it
-            if buy_line:
-
-                # Split and remove the thousands separator from the strings
-                amount_buy_string = buy_line.split('Buy ')[1].split(' for')[0]
-                amount_buy_string = amount_buy_string.replace(thousands_separator, '').replace('\n', '')
-
-                # Split and remove the thousands separator from the strings
-                price_buy_string = buy_line.split('for ')[1]
-                price_buy_string = price_buy_string.replace(thousands_separator, '').replace('\n', '')
-
-                # caclulate the per item price
-                buy = Decimal(price_buy_string) / Decimal(amount_buy_string)
-
-            #* get sell price, loops until it finds the line it's on 
-            sell_line = None
-            for j in range(i + 1, min(i + 2001, len(lines))):
-                if '[CHAT] Shop Information:' in lines[j]:
-                    # We have reached the end of the current item, stop searching for sell price information
-                    break
-                if '[CHAT] Sell' in lines[j] and 'for' in lines[j]:
-                    sell_line = lines[j]
-                    break
-
-            # if the line was found, process it
-            if sell_line:
-                
-                # Split and remove the thousands separator from the strings
-                amount_sell_string = sell_line.split('Sell ')[1].split(' for')[0]
-                amount_sell_string = amount_sell_string.replace(thousands_separator, '').replace('\n', '')
-                
-                # Split and remove the thousands separator from the strings
-                price_sell_string = sell_line.split('for ')[1]
-                price_sell_string = price_sell_string.replace(thousands_separator, '').replace('\n', '')
-
-                # caclulate the per item price
-                sell = Decimal(price_sell_string) / Decimal(amount_sell_string)
-
-            #* add row to excel workbook if all data is present
-            if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell for info in shop_info):
-
-                # append to data only
-                if buy is not None:
-                    ws.append([item, buy, "B", owner])
-                if sell is not None:
-                    ws.append([item, sell, "S", owner])
-
-                shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell})
-
-                # Uncomment when debugging
-                #print(f"The item is: {item}")
-                #print(f"The buy price is: ${buy}")
-                #print(f"The sell price is: ${sell}")
-
-                # unset prices so they don't accidentally get re-used
-                sell = None
-                buy = None  
-
-    #^ Save the workbook to a file
-    customtime = datetime.datetime.now().time().strftime('%H-%M-%S')
-    date = datetime.datetime.now().date()
-    wb.save(os.path.join('exports', f'{date}-at-{customtime}-shopdata.xlsx'))
-    wb.save(os.path.join('exports', 'latest-shopdata.xlsx'))
-
-    # compare time var to earlier to find how long it took
-    end_time = time.time()
-    elapsed_time = (end_time - start_time)*1000
-    print(f"Done! {elapsed_time:.2f}ms")
-
-# throw and error if it doesn't find the log file
-except FileNotFoundError as e:
-    print(f"An error occured: {e}")
+if __name__ == "__main__":
+    ShopLogParser()
