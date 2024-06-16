@@ -219,7 +219,7 @@ class ShopLogParser:
         return item
 
     def extract_prices(self, lines, i):
-        thousands_separator = ','  # Define your thousands separator here
+        thousands_separator = ','  # Define thousands separator here
 
         buy, sell = None, None
         
