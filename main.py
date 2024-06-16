@@ -210,12 +210,6 @@ class ShopLogParser:
                     #print(f"The repair cost is: {repair_cost}")
                     print("---")
 
-    def extract_owner(self, line):
-        return line.split('Owner: ')[1].split('\\n')[0]
-    
-    def extract_stock(self, line):
-        return line.split('Stock: ')[1].split('\\n')[0]
-
     def extract_item(self, line):
         return line.split('Item: ')[1].split('\n')[0]
 
@@ -230,6 +224,12 @@ class ShopLogParser:
         if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
             return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
         return item
+
+    def extract_owner(self, line):
+        return line.split('Owner: ')[1].split('\\n')[0]
+    
+    def extract_stock(self, line):
+        return line.split('Stock: ')[1].split('\\n')[0]
     
     def extract_repair_costs(self, lines, i):
         repair_cost = 0
