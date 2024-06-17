@@ -164,51 +164,94 @@ class ShopLogParser:
                 latest_release = response.json()
                 zipball_url = latest_release['zipball_url']
 
+                # Create a temporary directory
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     zip_path = os.path.join(tmpdirname, 'latest_release.zip')
+
+                    # Download the zip file
                     with open(zip_path, 'wb') as f:
                         for chunk in requests.get(zipball_url, stream=True).iter_content(chunk_size=8192):
                             f.write(chunk)
 
+                    # Extract the zip file
                     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                         zip_ref.extractall(tmpdirname)
 
-                    extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
+                    # Find the extracted directories
+                    extracted_dirs = [d for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d))]
+                    if not extracted_dirs:
+                        raise RuntimeError("No extracted directory found")
+
+                    # Define paths to specific files to be copied
+                    extracted_dir = os.path.join(tmpdirname, extracted_dirs[0])
+                    shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
+                    version_py = os.path.join(extracted_dir, 'version.py')
+
+                    # Copy specific files to destination directories
+                    dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
+                    if not os.path.exists(dict_dest_dir):
+                        os.makedirs(dict_dest_dir)
+
+                    # Copy Shop-Log-Parser directory
+                    if os.path.exists(shop_log_parser_dir):
+                        for item in os.listdir(shop_log_parser_dir):
+                            s = os.path.join(shop_log_parser_dir, item)
+                            d = os.path.join(dict_dest_dir, item)
+                            if os.path.isdir(s):
+                                shutil.copytree(s, d, dirs_exist_ok=True)
+                            else:
+                                shutil.copy2(s, d)
+
+                    # Copy version.py
+                    if os.path.exists(version_py):
+                        shutil.copy2(version_py, dict_dest_dir)
+
                     return extracted_dir
+
             except Exception as e:
                 print(f"An error occurred while updating {repo}: {e}")
                 sys.exit(1)
 
-        if option == 'all' or option == 'script':
-            extracted_dir = download_and_extract(self.REPO)
-            script_name = os.path.basename(__file__)
-            new_script_path = os.path.join(extracted_dir, script_name)
+        try:
+            if option in ['all', 'script']:
+                # Update script logic
+                updated_script_dir = download_and_extract(self.REPO)
+                script_name = os.path.basename(__file__)
+                new_script_path = os.path.join(updated_script_dir, script_name)
 
-            if os.path.exists(new_script_path):
-                shutil.copy2(new_script_path, script_name)
-            else:
-                print(f"Updated script not found in the release: {new_script_path}")
-                sys.exit(1)
-
-        if option == 'all' or option == 'dict':
-            extracted_dict_dir = download_and_extract(self.DICT_REPO)
-            # Implement the logic for updating dictionaries here, for example:
-            dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
-            if not os.path.exists(dict_dest_dir):
-                os.makedirs(dict_dest_dir)
-            for item in os.listdir(extracted_dict_dir):
-                s = os.path.join(extracted_dict_dir, item)
-                d = os.path.join(dict_dest_dir, item)
-                if os.path.isdir(s):
-                    shutil.copytree(s, d, dirs_exist_ok=True)
+                if os.path.exists(new_script_path):
+                    shutil.copy2(new_script_path, script_name)
                 else:
-                    shutil.copy2(s, d)
+                    print(f"Updated script not found in the release: {new_script_path}")
+                    sys.exit(1)
 
-        print("Update complete.")
-        if option == 'all' or option == 'script':
-            print("Restarting the script...")
-            sys.argv = [sys.argv[0], '--help']
-            os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
+            if option in ['all', 'dicts']:
+                # Update dictionaries logic
+                updated_dicts_dir = download_and_extract(self.DICT_REPO)
+                dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
+                if not os.path.exists(dict_dest_dir):
+                    os.makedirs(dict_dest_dir)
+
+                # Copy specific files from updated_dicts_dir
+                # For example, copy only files ending with '.txt'
+                for item in os.listdir(updated_dicts_dir):
+                    if item.endswith('.txt'):
+                        s = os.path.join(updated_dicts_dir, item)
+                        d = os.path.join(dict_dest_dir, item)
+                        if os.path.isdir(s):
+                            shutil.copytree(s, d, dirs_exist_ok=True)
+                        else:
+                            shutil.copy2(s, d)
+
+            print("Update complete.")
+            if option in ['all', 'script']:
+                print("Restarting the script...")
+                sys.argv = [sys.argv[0], '--help']
+                os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
+
+        except Exception as e:
+            print(f"An error occurred during update: {e}")
+            sys.exit(1)
 
     def run(self):
         if self.args.update:
