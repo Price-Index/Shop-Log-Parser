@@ -48,11 +48,11 @@ class ShopLogParser:
         Fetches the latest release tag from the GitHub API.
         """
 
-        token = 'abcdefg'
+        # token = 'abcdefg' # Include personal access token if you get rate limited by the GitHub REST API
 
         headers = {
             'Accept': 'application/vnd.github+json',
-            'Authorization': f'token {token}'
+            # 'Authorization': f'token {token}'
         }
         url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
         try:
