@@ -49,6 +49,7 @@ class ShopLogParser:
         self.shop_info = []
         self.cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
         self.exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
+        self.dict_dest_dir = os.path.join(os.path.dirname(__file__), 'dictionaries')
         self.temppath2 = None # Initialize temppath2
         self.path2 = None     # Initialize path2
         self.ensure_directories()
@@ -188,15 +189,14 @@ class ShopLogParser:
                     version_py = os.path.join(extracted_dir, 'version.py')
 
                     # Copy specific files to destination directories
-                    dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
-                    if not os.path.exists(dict_dest_dir):
-                        os.makedirs(dict_dest_dir)
+                    if not os.path.exists(self.dict_dest_dir):
+                        os.makedirs(self.dict_dest_dir)
 
                     # Copy Shop-Log-Parser directory
                     if os.path.exists(shop_log_parser_dir):
                         for item in os.listdir(shop_log_parser_dir):
                             s = os.path.join(shop_log_parser_dir, item)
-                            d = os.path.join(dict_dest_dir, item)
+                            d = os.path.join(self.dict_dest_dir, item)
                             if os.path.isdir(s):
                                 shutil.copytree(s, d, dirs_exist_ok=True)
                             else:
@@ -204,7 +204,7 @@ class ShopLogParser:
 
                     # Copy version.py
                     if os.path.exists(version_py):
-                        shutil.copy2(version_py, dict_dest_dir)
+                        shutil.copy2(version_py, self.dict_dest_dir)
 
                     return extracted_dir
 
@@ -228,16 +228,15 @@ class ShopLogParser:
             if option in ['all', 'dicts']:
                 # Update dictionaries logic
                 updated_dicts_dir = download_and_extract(self.DICT_REPO)
-                dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
-                if not os.path.exists(dict_dest_dir):
-                    os.makedirs(dict_dest_dir)
+                if not os.path.exists(self.dict_dest_dir):
+                    os.makedirs(self.dict_dest_dir)
 
                 # Copy specific files from updated_dicts_dir
                 # For example, copy only files ending with '.txt'
                 for item in os.listdir(updated_dicts_dir):
                     if item.endswith('.txt'):
                         s = os.path.join(updated_dicts_dir, item)
-                        d = os.path.join(dict_dest_dir, item)
+                        d = os.path.join(self.dict_dest_dir, item)
                         if os.path.isdir(s):
                             shutil.copytree(s, d, dirs_exist_ok=True)
                         else:

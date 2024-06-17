@@ -47,10 +47,10 @@ GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser
 """
 
 ### NEEDS TO KEEP UPDATING
-from dictionaries.version import version
+# from dictionaries.version import version
 
 script_version = 'v2.0.0-beta'
-dict_version = version
+dict_version = 'vUnknown'
 
 """
 ## Software version
