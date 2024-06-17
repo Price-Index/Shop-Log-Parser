@@ -17,7 +17,7 @@ You can also visit the [Developer Updates](https://github.com/Price-Index/.githu
 
 - [Shop Log Parser](/docs/SHOPLOGPARSER.md) _<-- Click here to go to the Documentation!_
 
---- 
+---
 
 ## Getting Started
 
