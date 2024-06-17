@@ -19,22 +19,6 @@ from openpyxl import Workbook
 from decimal import Decimal
 from metadata import script_version, dict_version, OWNER, REPO, DICT_REPO
 
-def get_latest_release(owner, repo):
-    """
-    Fetches the latest release tag from the GitHub API.
-    """
-    headers = {
-        'Accept': 'application/vnd.github+json'
-    }
-    url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()['tag_name']
-    except requests.RequestException as e:
-        print(f'\033[31mWarning: Could not connect to the GitHub API. vUnknown. Error: {e}\033[0m')
-        return 'vUnknown'
-
 class ShopLogParser:
     def __init__(self, line_limit=2000, thousands_separator=','):
         self.OWNER = OWNER
@@ -58,11 +42,31 @@ class ShopLogParser:
         self.setup_workbook()
         self.run()
 
+    def get_latest_release(self, owner, repo):
+        """
+        Fetches the latest release tag from the GitHub API.
+        """
+
+        token = 'abcdefg'
+
+        headers = {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': f'token {token}'
+        }
+        url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()['tag_name']
+        except requests.RequestException as e:
+            print(f'\033[31mWarning: Could not connect to the GitHub API. vUnknown. Error: {e}\033[0m')
+            return 'vUnknown'
+
     def parse_arguments(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
         
-        script_latest_version = get_latest_release(self.OWNER, self.REPO)
-        dict_latest_version = get_latest_release(self.OWNER, self.DICT_REPO)
+        script_latest_version = self.get_latest_release(self.OWNER, self.REPO)
+        dict_latest_version = self.get_latest_release(self.OWNER, self.DICT_REPO)
         
         def format_version_msg(repo, latest_version, current_version):
             if latest_version != current_version and latest_version != 'vUnknown':
@@ -213,6 +217,7 @@ class ShopLogParser:
                 sys.exit(1)
 
         try:
+            # If all, it does this first part
             if option in ['all', 'script']:
                 # Update script logic
                 updated_script_dir = download_and_extract(self.REPO)
@@ -225,6 +230,7 @@ class ShopLogParser:
                     print(f"Updated script not found in the release: {new_script_path}")
                     sys.exit(1)
 
+            # And this second part
             if option in ['all', 'dicts']:
                 # Update dictionaries logic
                 updated_dicts_dir = download_and_extract(self.DICT_REPO)
