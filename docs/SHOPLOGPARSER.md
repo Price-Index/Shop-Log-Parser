@@ -3,12 +3,20 @@
 
 ---
 
-This is the documentation of the [Shop Log parser](/docs/LOGPARSER.md).
+This is the documentation of the [Shop Log parser](/docs/SHOPLOGPARSER.md).
 
 > [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Main](/README.md) _<-- Click here to get back!_
+
+### Content
+- [ Shop Log Parser ](#-shop-log-parser-)
+    - [Content](#content)
+  - [How to use](#how-to-use)
+  - [How to run](#how-to-run)
+  - [Updating](#updating)
+  - [How it works](#how-it-works)
 
 ---
 
@@ -30,11 +38,31 @@ This will show you additional info of how to use the script.
 > [!NOTE]
 > *Depending on your OS it might be ``py`` ``python``, ``python3`` or other.*
 
-> [!IMPORTANT]
-> The [dictionary](/resources/log_parser) list may be incomplete causing unknown items (enchanted items for example) to appear.
+> [!TIP]
+> Running ``python3 main.py`` without the ``-h`` arg runs the script in normal mode, so it parses logs. 
 
 > [!IMPORTANT]
-> The [dictionary](/resources/log_parser) was only made for Non-anvilled items as those are the only items actually worth something.
+> The [dictionary](https://github.com/Price-Index/Dictionaries) lists may be incomplete causing unknown items (enchanted items for example) to appear.
+
+> [!IMPORTANT]
+> The [dictionary](https://github.com/Price-Index/Dictionaries) were only made for Non-anvilled items as those are the only items actually worth something.
+
+## Updating
+There's built in ways to update both the dictionaries and the script itself.
+```py
+# Updating everything if theres updates for it
+python3 main.py --update all
+
+# Updating only the script
+python3 main.py --update script
+
+# Updating only the dictionaries
+python3 main.py --update dicts
+```
+You should usually get notified if your local copy can get updated when running the script using the ``-h`` arg.
+
+> [!TIP]
+> If you do not get notified, it could be that you do not have a working internet connection.
 
 ## How it works
 Everytime you boot Minecraft, the game makes a ``latest.log`` file under ``C:\Users\%USERPROFILE%\AppData\Roaming\.minecraft\logs``.\

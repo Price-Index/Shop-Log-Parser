@@ -18,9 +18,17 @@ connect to the GitHub API, for version tracking.
 This constant stores the repository name which is used to\\
 connect to the GitHub API, for version tracking.
 
+``DICT_REPO = string``
+This constant stores the dictonary repository name which is used to\\
+connect to the GitHub API, for version tracking.
+
 ### Variables
 ``version = string``
-This variable stores the version integer which is used to keep\\
+This variable stores the version which is used to keep\\
+track of the software version.
+
+``version = string``
+This variable stores the dictionary version which is used to keep\\
 track of the software version.
 """
 
@@ -32,12 +40,15 @@ Originally made by [Vox314](https://github.com/Vox314) in 2023
 """
 
 REPO = 'Shop-Log-Parser'
+DICT_REPO = 'Dictionaries'
 
 """
 GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser)
 """
 
-version = 'v2.0.0-beta' # Needs to keep updating!
+### NEEDS TO KEEP UPDATING
+script_version = 'v2.0.0-beta'
+dict_version = 'v0.1'
 
 """
 ## Software version

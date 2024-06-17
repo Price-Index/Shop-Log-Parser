@@ -17,7 +17,7 @@ import shutil
 import tempfile
 from openpyxl import Workbook
 from decimal import Decimal
-from resources.metadata import version, OWNER, REPO
+from metadata import script_version, dict_version, OWNER, REPO, DICT_REPO
 
 def get_latest_release(owner, repo):
     """
@@ -37,6 +37,11 @@ def get_latest_release(owner, repo):
 
 class ShopLogParser:
     def __init__(self, line_limit=2000, thousands_separator=','):
+        self.OWNER = OWNER
+        self.REPO = REPO
+        self.DICT_REPO = DICT_REPO
+        self.script_version = script_version
+        self.dict_version = dict_version
         self.start_time = time.time()
         self.args = self.parse_arguments()
         self.line_limit = line_limit
@@ -54,12 +59,29 @@ class ShopLogParser:
 
     def parse_arguments(self):
         parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-        latest_version = get_latest_release(OWNER, REPO)
-        new_version_msg = f'\033[32m{latest_version} is now available!\033[0m\n\n' if latest_version != version else ''
-        parser.description = f'{new_version_msg}\033[38;2;170;0;170m{REPO} {version}\033[0m\n\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
         
-        if latest_version != version and latest_version != 'vUnknown':
-            parser.add_argument('-u', '--update', nargs='?', const='latest', help='\033[32mUpdates to a newer version.\033[0m')
+        script_latest_version = get_latest_release(self.OWNER, self.REPO)
+        dict_latest_version = get_latest_release(self.OWNER, self.DICT_REPO)
+        
+        def format_version_msg(repo, latest_version, current_version):
+            if latest_version != current_version and latest_version != 'vUnknown':
+                return f'\033[32m{repo, latest_version} is now available!\033[0m\n\n'
+            return ''
+        
+        new_script_version_msg = format_version_msg(self.REPO, script_latest_version, self.script_version)
+        new_dict_version_msg = format_version_msg(self.DICT_REPO, dict_latest_version, self.dict_version)
+        
+        version_messages = f'{new_script_version_msg}{new_dict_version_msg}'
+        current_versions = f'\033[38;2;170;0;170m{self.REPO} {self.script_version} & {self.DICT_REPO} {self.dict_version}\033[0m'
+        copyright_msg = '\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
+        
+        parser.description = f'{version_messages}{current_versions}\n{copyright_msg}'
+        
+        if new_script_version_msg or new_dict_version_msg:
+            parser.add_argument('-u', '--update', 
+                                choices=['all', 'dicts', 'script'], 
+                                default='all', 
+                                help='\033[32mUpdates to a newer version.\033[0m (options: all, dicts, script)')
 
         parser.add_argument('-p', '--path', type=self.file_path, help='Path to the .minecraft folder (this path will be cached).')
         parser.add_argument('-tp', '--temppath', type=self.file_path, help='Temporarily set the path for one run.')
@@ -130,45 +152,67 @@ class ShopLogParser:
         if os.path.isdir(string):
             return string
         else:
-            raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --h arg.")
+            raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --help arg.")
 
-    def update(self):
+    def update(self, option):
         print("Updating...")
-        try:
-            response = requests.get(f'https://api.github.com/repos/{OWNER}/{REPO}/releases/latest')
-            response.raise_for_status()
-            latest_release = response.json()
-            zipball_url = latest_release['zipball_url']
 
-            with tempfile.TemporaryDirectory() as tmpdirname:
-                zip_path = os.path.join(tmpdirname, 'latest_release.zip')
-                with open(zip_path, 'wb') as f:
-                    for chunk in requests.get(zipball_url, stream=True).iter_content(chunk_size=8192):
-                        f.write(chunk)
+        def download_and_extract(repo):
+            try:
+                response = requests.get(f'https://api.github.com/repos/{self.OWNER}/{repo}/releases/latest')
+                response.raise_for_status()
+                latest_release = response.json()
+                zipball_url = latest_release['zipball_url']
 
-                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                    zip_ref.extractall(tmpdirname)
+                with tempfile.TemporaryDirectory() as tmpdirname:
+                    zip_path = os.path.join(tmpdirname, 'latest_release.zip')
+                    with open(zip_path, 'wb') as f:
+                        for chunk in requests.get(zipball_url, stream=True).iter_content(chunk_size=8192):
+                            f.write(chunk)
 
-                extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
-                script_name = os.path.basename(__file__)
-                new_script_path = os.path.join(extracted_dir, script_name)
+                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(tmpdirname)
 
-                if os.path.exists(new_script_path):
-                    shutil.copy2(new_script_path, script_name)
+                    extracted_dir = next(os.path.join(tmpdirname, d) for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d)))
+                    return extracted_dir
+            except Exception as e:
+                print(f"An error occurred while updating {repo}: {e}")
+                sys.exit(1)
+
+        if option == 'all' or option == 'script':
+            extracted_dir = download_and_extract(self.REPO)
+            script_name = os.path.basename(__file__)
+            new_script_path = os.path.join(extracted_dir, script_name)
+
+            if os.path.exists(new_script_path):
+                shutil.copy2(new_script_path, script_name)
+            else:
+                print(f"Updated script not found in the release: {new_script_path}")
+                sys.exit(1)
+
+        if option == 'all' or option == 'dict':
+            extracted_dict_dir = download_and_extract(self.DICT_REPO)
+            # Implement the logic for updating dictionaries here, for example:
+            dict_dest_dir = os.path.join(os.getcwd(), 'dictionaries')
+            if not os.path.exists(dict_dest_dir):
+                os.makedirs(dict_dest_dir)
+            for item in os.listdir(extracted_dict_dir):
+                s = os.path.join(extracted_dict_dir, item)
+                d = os.path.join(dict_dest_dir, item)
+                if os.path.isdir(s):
+                    shutil.copytree(s, d, dirs_exist_ok=True)
                 else:
-                    print(f"Updated script not found in the release: {new_script_path}")
-                    sys.exit(1)
+                    shutil.copy2(s, d)
 
-            print("Update complete. Restarting the script...")
+        print("Update complete.")
+        if option == 'all' or option == 'script':
+            print("Restarting the script...")
             sys.argv = [sys.argv[0], '--help']
             os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
-        except Exception as e:
-            print(f"An error occurred during update: {e}")
-            sys.exit(1)
 
     def run(self):
         if self.args.update:
-            self.update()
+            self.update(option=self.args.update)
         else:
             self.parse_shop_logs()
             self.save_workbook()
@@ -217,7 +261,7 @@ class ShopLogParser:
         dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json', 'fireworks.json']
         index_dictionary = {}
         for file_name in dict_pages:
-            with open(os.path.join('resources', 'dictionary', file_name), 'r') as file:
+            with open(os.path.join('dictionaries', file_name), 'r') as file:
                 data = json.load(file)
                 index_dictionary.update(data)
 
