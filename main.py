@@ -275,18 +275,10 @@ class ShopLogParser:
                         self.ws.append([item, buy, "B", owner, stock, repair_cost])
                     if sell is not None:
                         self.ws.append([item, sell, "S", owner, stock, repair_cost])
+
                     # Append detailed dictionary to shop_info in order to prevent duplicates
                     self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell, 'stock': stock, 'repair_cost': repair_cost})
                     
-                    # TODO: remove in future
-                    # Uncomment when debugging
-                    #print(f"The owner is: {owner}")
-                    print(f"The item is: {item}")
-                    #print(f"The buy price is: ${buy}")
-                    #print(f"The sell price is: ${sell}")
-                    #print(f"The stock is: {stock}")
-                    #print(f"The repair cost is: {repair_cost}")
-                    print("---")
 
     def extract_item(self, line):
         return line.split('Item: ')[1].split('\n')[0]
