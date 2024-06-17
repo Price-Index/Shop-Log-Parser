@@ -222,6 +222,7 @@ class ShopLogParser:
                             print(f"Updated script not found in the release: {new_script_path}")
                             sys.exit(1)
 
+                    print("Update complete.")
                     return extracted_dir
 
             except Exception as e:
@@ -229,12 +230,11 @@ class ShopLogParser:
                 sys.exit(1)
 
         try:
-            # It basically always runs this function
-            if option in ['all', 'dicts', 'script']:
+            if option in ['all', 'dicts']:
                 download_and_extract(self.DICT_REPO)
 
-            print("Update complete.")
             if option in ['all', 'script']:
+                download_and_extract(self.REPO)
                 script_name = os.path.basename(__file__)
                 print("Restarting the script...")
                 sys.argv = [sys.argv[0], '--help']
