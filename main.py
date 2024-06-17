@@ -34,7 +34,7 @@ class ShopLogParser:
         self.cwd = os.path.dirname(__file__)
         self.cache_dir = os.path.join(self.cwd, 'cache')
         self.exports_dir = os.path.join(self.cwd, 'exports')
-        self.dict_dest_dir = os.path.join(self.cwd, 'dictionaries')
+        self.dict_dest_dir = os.path.join(self.cwd, 'dictionary')
         self.temppath2 = None # Initialize temppath2
         self.path2 = None     # Initialize path2
         self.ensure_directories()
@@ -292,7 +292,7 @@ class ShopLogParser:
         dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json', 'fireworks.json']
         index_dictionary = {}
         for file_name in dict_pages:
-            with open(os.path.join('dictionaries', file_name), 'r') as file:
+            with open(os.path.join('dictionary', file_name), 'r') as file:
                 data = json.load(file)
                 index_dictionary.update(data)
 

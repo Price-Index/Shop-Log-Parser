@@ -40,15 +40,13 @@ Originally made by [Vox314](https://github.com/Vox314) in 2023
 """
 
 REPO = 'Shop-Log-Parser'
-DICT_REPO = 'Dictionaries'
+DICT_REPO = 'Shop-Log-Parser-Dictionary'
 
 """
 GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser)
 """
 
 ### NEEDS TO KEEP UPDATING
-# from dictionaries.version import version
-
 script_version = 'v2.0.0-beta'
 dict_version = 'vUnknown'
 
