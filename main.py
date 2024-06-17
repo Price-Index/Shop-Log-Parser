@@ -215,7 +215,7 @@ class ShopLogParser:
 
                     if repo == self.REPO:
                         if os.path.exists(extracted_dir):
-                            shutil.copy2(extracted_dir, self.cwd)
+                            shutil.copytree(extracted_dir, self.cwd, dirs_exist_ok=True)
                         else:
                             print(f"Updated script not found in the release: {extracted_dir}")
                             sys.exit(1)
