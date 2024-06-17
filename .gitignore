@@ -3,8 +3,6 @@
 __pycache__/
 exports/
 cache/
-dictionaries/
+dictionary/
 *.log
 *.xlsx
-renamed_block_data.json
-renamed_item_data.json
