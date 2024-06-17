@@ -212,6 +212,16 @@ class ShopLogParser:
                         if os.path.exists(version_py):
                             shutil.copy2(version_py, self.dict_dest_dir)
 
+                    if repo == self.REPO:
+                        script_name = os.path.basename(__file__)
+                        new_script_path = os.path.join(extracted_dir, script_name)
+
+                        if os.path.exists(new_script_path):
+                            shutil.copy2(new_script_path, script_name)
+                        else:
+                            print(f"Updated script not found in the release: {new_script_path}")
+                            sys.exit(1)
+
                     return extracted_dir
 
             except Exception as e:
@@ -219,26 +229,13 @@ class ShopLogParser:
                 sys.exit(1)
 
         try:
-            # If all, it does this first part
-            if option in ['all', 'script']:
-                # Update script logic
-                updated_script_dir = download_and_extract(self.REPO)
-                script_name = os.path.basename(__file__)
-                new_script_path = os.path.join(updated_script_dir, script_name)
-
-                if os.path.exists(new_script_path):
-                    shutil.copy2(new_script_path, script_name)
-                else:
-                    print(f"Updated script not found in the release: {new_script_path}")
-                    sys.exit(1)
-
-            # And this second part
-            if option in ['all', 'dicts']:
-
+            # It basically always runs this function
+            if option in ['all', 'dicts', 'script']:
                 download_and_extract(self.DICT_REPO)
 
             print("Update complete.")
             if option in ['all', 'script']:
+                script_name = os.path.basename(__file__)
                 print("Restarting the script...")
                 sys.argv = [sys.argv[0], '--help']
                 os.execv(sys.executable, ['python'] + [script_name] + sys.argv[1:])
