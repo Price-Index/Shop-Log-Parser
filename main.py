@@ -85,13 +85,18 @@ class ShopLogParser:
         
         if new_script_version_msg or new_dict_version_msg:
             parser.add_argument('-u', '--update', 
-                                choices=['all', 'dicts', 'script'], 
+                                choices=['all', 'dict', 'script'], 
                                 default='all', 
                                 help='\033[32mUpdates to a newer version.\033[0m')
 
         parser.add_argument('-p', '--path', type=self.file_path, help='Path to the .minecraft folder (this path will be cached).')
         parser.add_argument('-tp', '--temppath', type=self.file_path, help='Temporarily set the path for one run.')
         parser.add_argument('-rp', '--releasepath', action='store_true', help='Releases cached path.')
+
+        if '-h' in sys.argv or '--help' in sys.argv:
+            parser.print_help()
+            sys.exit(0)
+
         return parser.parse_args()
 
     def ensure_directories(self):
@@ -220,15 +225,17 @@ class ShopLogParser:
                             print(f"Updated script not found in the release: {extracted_dir}")
                             sys.exit(1)
 
-                    print("Update complete.")
                     return extracted_dir
 
             except Exception as e:
                 print(f"An error occurred while updating {repo}: {e}")
                 sys.exit(1)
 
+            finally:
+                print("Update complete.")
+
         try:
-            if option in ['all', 'dicts']:
+            if option in ['all', 'dict']:
                 download_and_extract(self.DICT_REPO)
 
             if option in ['all', 'script']:
