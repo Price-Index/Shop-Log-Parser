@@ -42,13 +42,13 @@ This will show you additional info of how to use the script.
 > Running ``python3 main.py`` without the ``-h`` arg runs the script in normal mode, so it parses logs. 
 
 > [!IMPORTANT]
-> The [dictionary](https://github.com/Price-Index/Dictionaries) lists may be incomplete causing unknown items (enchanted items for example) to appear.
+> The [dictionary](https://github.com/Price-Index/Dictionary) lists may be incomplete causing unknown items (enchanted items for example) to appear.
 
 > [!IMPORTANT]
-> The [dictionary](https://github.com/Price-Index/Dictionaries) were only made for Non-anvilled items as those are the only items actually worth something.
+> The [dictionary](https://github.com/Price-Index/Dictionary) were only made for Non-anvilled items as those are the only items actually worth something.
 
 ## Updating
-There's built in ways to update both the dictionaries and the script itself.
+There's built in ways to update both the Dictionary and the script itself.
 ```py
 # Updating everything if theres updates for it
 python3 main.py --update all
@@ -56,7 +56,7 @@ python3 main.py --update all
 # Updating only the script
 python3 main.py --update script
 
-# Updating only the dictionaries
+# Updating only the Dictionary
 python3 main.py --update dicts
 ```
 You should usually get notified if your local copy can get updated when running the script using the ``-h`` arg.
