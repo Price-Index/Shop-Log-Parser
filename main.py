@@ -60,7 +60,7 @@ class ShopLogParser:
             response.raise_for_status()
             return response.json()['tag_name']
         except requests.RequestException as e:
-            print(f'\033[31mWarning: Could not connect to the GitHub API. vUnknown. Error: {e}\033[0m')
+            print(f'\033[31mWarning: Could not connect to the GitHub API. Error: {e}\033[0m')
             return 'vUnknown'
 
     def parse_arguments(self):
@@ -194,6 +194,10 @@ class ShopLogParser:
                         # Define paths to specific files to be copied
                         shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
                         version_py = os.path.join(extracted_dir, 'version.py')
+
+                        # Copy specific files to destination directories
+                        if not os.path.exists(self.dict_dest_dir):
+                            os.makedirs(self.dict_dest_dir)
 
                         # Copy Shop-Log-Parser directory
                         if os.path.exists(shop_log_parser_dir):
