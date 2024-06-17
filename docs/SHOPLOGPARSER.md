@@ -57,7 +57,7 @@ python3 main.py --update all
 python3 main.py --update script
 
 # Updating only the Dictionary
-python3 main.py --update dicts
+python3 main.py --update dict
 ```
 You should usually get notified if your local copy can get updated when running the script using the ``-h`` arg.
 
