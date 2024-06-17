@@ -187,28 +187,29 @@ class ShopLogParser:
                     if not extracted_dirs:
                         raise RuntimeError("No extracted directory found")
 
-                    # Define paths to specific files to be copied
-                    extracted_dir = os.path.join(tmpdirname, extracted_dirs[0])
-                    shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
-                    version_py = os.path.join(extracted_dir, 'version.py')
+                    if repo == self.DICT_REPO:
+                        # Define paths to specific files to be copied
+                        extracted_dir = os.path.join(tmpdirname, extracted_dirs[0])
+                        shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
+                        version_py = os.path.join(extracted_dir, 'version.py')
 
-                    # Copy specific files to destination directories
-                    if not os.path.exists(self.dict_dest_dir):
-                        os.makedirs(self.dict_dest_dir)
+                        # Copy specific files to destination directories
+                        if not os.path.exists(self.dict_dest_dir):
+                            os.makedirs(self.dict_dest_dir)
 
-                    # Copy Shop-Log-Parser directory
-                    if os.path.exists(shop_log_parser_dir):
-                        for item in os.listdir(shop_log_parser_dir):
-                            s = os.path.join(shop_log_parser_dir, item)
-                            d = os.path.join(self.dict_dest_dir, item)
-                            if os.path.isdir(s):
-                                shutil.copytree(s, d, dirs_exist_ok=True)
-                            else:
-                                shutil.copy2(s, d)
+                        # Copy Shop-Log-Parser directory
+                        if os.path.exists(shop_log_parser_dir):
+                            for item in os.listdir(shop_log_parser_dir):
+                                s = os.path.join(shop_log_parser_dir, item)
+                                d = os.path.join(self.dict_dest_dir, item)
+                                if os.path.isdir(s):
+                                    shutil.copytree(s, d, dirs_exist_ok=True)
+                                else:
+                                    shutil.copy2(s, d)
 
-                    # Copy version.py
-                    if os.path.exists(version_py):
-                        shutil.copy2(version_py, self.dict_dest_dir)
+                        # Copy version.py
+                        if os.path.exists(version_py):
+                            shutil.copy2(version_py, self.dict_dest_dir)
 
                     return extracted_dir
 
@@ -232,21 +233,8 @@ class ShopLogParser:
 
             # And this second part
             if option in ['all', 'dicts']:
-                # Update dictionaries logic
-                updated_dicts_dir = download_and_extract(self.DICT_REPO)
-                if not os.path.exists(self.dict_dest_dir):
-                    os.makedirs(self.dict_dest_dir)
 
-                # Copy specific files from updated_dicts_dir
-                # For example, copy only files ending with '.txt'
-                for item in os.listdir(updated_dicts_dir):
-                    if item.endswith('.txt'):
-                        s = os.path.join(updated_dicts_dir, item)
-                        d = os.path.join(self.dict_dest_dir, item)
-                        if os.path.isdir(s):
-                            shutil.copytree(s, d, dirs_exist_ok=True)
-                        else:
-                            shutil.copy2(s, d)
+                download_and_extract(self.DICT_REPO)
 
             print("Update complete.")
             if option in ['all', 'script']:
