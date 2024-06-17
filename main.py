@@ -186,10 +186,11 @@ class ShopLogParser:
                     extracted_dirs = [d for d in os.listdir(tmpdirname) if os.path.isdir(os.path.join(tmpdirname, d))]
                     if not extracted_dirs:
                         raise RuntimeError("No extracted directory found")
+                    
+                    extracted_dir = os.path.join(tmpdirname, extracted_dirs[0])
 
                     if repo == self.DICT_REPO:
                         # Define paths to specific files to be copied
-                        extracted_dir = os.path.join(tmpdirname, extracted_dirs[0])
                         shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
                         version_py = os.path.join(extracted_dir, 'version.py')
 
