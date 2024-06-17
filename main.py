@@ -65,7 +65,7 @@ class ShopLogParser:
         
         def format_version_msg(repo, latest_version, current_version):
             if latest_version != current_version and latest_version != 'vUnknown':
-                return f'\033[32m{repo, latest_version} is now available!\033[0m\n\n'
+                return f'\033[32m{repo} {latest_version} is now available!\033[0m\n'
             return ''
         
         new_script_version_msg = format_version_msg(self.REPO, script_latest_version, self.script_version)
@@ -75,13 +75,13 @@ class ShopLogParser:
         current_versions = f'\033[38;2;170;0;170m{self.REPO} {self.script_version} & {self.DICT_REPO} {self.dict_version}\033[0m'
         copyright_msg = '\033[38;2;0;170;170mCopyright (c) 2023-present Vox313 and 32294\033[0m'
         
-        parser.description = f'{version_messages}{current_versions}\n{copyright_msg}'
+        parser.description = f'{version_messages}\n{current_versions}\n{copyright_msg}'
         
         if new_script_version_msg or new_dict_version_msg:
             parser.add_argument('-u', '--update', 
                                 choices=['all', 'dicts', 'script'], 
                                 default='all', 
-                                help='\033[32mUpdates to a newer version.\033[0m (options: all, dicts, script)')
+                                help='\033[32mUpdates to a newer version.\033[0m')
 
         parser.add_argument('-p', '--path', type=self.file_path, help='Path to the .minecraft folder (this path will be cached).')
         parser.add_argument('-tp', '--temppath', type=self.file_path, help='Temporarily set the path for one run.')

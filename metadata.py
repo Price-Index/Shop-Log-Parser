@@ -28,7 +28,7 @@ This variable stores the version which is used to keep\\
 track of the software version.
 
 ``version = string``
-This variable stores the dictionary version which is used to keep\\
+This variable stores the dictionaries's version which is used to keep\\
 track of the software version.
 """
 
@@ -47,8 +47,10 @@ GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser
 """
 
 ### NEEDS TO KEEP UPDATING
+from dictionaries.version import version
+
 script_version = 'v2.0.0-beta'
-dict_version = 'v0.1'
+dict_version = version
 
 """
 ## Software version
