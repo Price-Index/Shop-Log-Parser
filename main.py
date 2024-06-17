@@ -195,10 +195,6 @@ class ShopLogParser:
                         shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
                         version_py = os.path.join(extracted_dir, 'version.py')
 
-                        # Copy specific files to destination directories
-                        if not os.path.exists(self.dict_dest_dir):
-                            os.makedirs(self.dict_dest_dir)
-
                         # Copy Shop-Log-Parser directory
                         if os.path.exists(shop_log_parser_dir):
                             for item in os.listdir(shop_log_parser_dir):
