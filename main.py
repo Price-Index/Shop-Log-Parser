@@ -31,9 +31,10 @@ class ShopLogParser:
         self.line_limit = line_limit
         self.thousands_separator = thousands_separator
         self.shop_info = []
-        self.cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
-        self.exports_dir = os.path.join(os.path.dirname(__file__), 'exports')
-        self.dict_dest_dir = os.path.join(os.path.dirname(__file__), 'dictionaries')
+        self.cwd = os.path.dirname(__file__)
+        self.cache_dir = os.path.join(self.cwd, 'cache')
+        self.exports_dir = os.path.join(self.cwd, 'exports')
+        self.dict_dest_dir = os.path.join(self.cwd, 'dictionaries')
         self.temppath2 = None # Initialize temppath2
         self.path2 = None     # Initialize path2
         self.ensure_directories()
@@ -213,13 +214,10 @@ class ShopLogParser:
                             shutil.copy2(version_py, self.dict_dest_dir)
 
                     if repo == self.REPO:
-                        script_name = os.path.basename(__file__)
-                        new_script_path = os.path.join(extracted_dir, script_name)
-
-                        if os.path.exists(new_script_path):
-                            shutil.copy2(new_script_path, script_name)
+                        if os.path.exists(extracted_dir):
+                            shutil.copy2(extracted_dir, self.cwd)
                         else:
-                            print(f"Updated script not found in the release: {new_script_path}")
+                            print(f"Updated script not found in the release: {extracted_dir}")
                             sys.exit(1)
 
                     print("Update complete.")
