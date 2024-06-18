@@ -3,6 +3,6 @@
 __pycache__/
 exports/
 cache/
-dictionary/
+*.json
 *.log
 *.xlsx

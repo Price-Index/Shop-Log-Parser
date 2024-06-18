@@ -26,10 +26,6 @@ connect to the GitHub API, for version tracking.
 ``version = string``
 This variable stores the version which is used to keep\\
 track of the software version.
-
-``version = string``
-This variable stores the dictionaries's version which is used to keep\\
-track of the software version.
 """
 
 # Metadata
@@ -48,7 +44,6 @@ GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser
 
 ### NEEDS TO KEEP UPDATING
 script_version = 'v2.0.0-beta'
-dict_version = 'vUnknown'
 
 """
 ## Software version

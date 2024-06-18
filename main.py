@@ -17,15 +17,15 @@ import shutil
 import tempfile
 from openpyxl import Workbook
 from decimal import Decimal
-from metadata import script_version, dict_version, OWNER, REPO, DICT_REPO
+from metadata import dict_version, script_version, OWNER, REPO, DICT_REPO
 
 class ShopLogParser:
     def __init__(self, line_limit=2000, thousands_separator=','):
         self.OWNER = OWNER
         self.REPO = REPO
         self.DICT_REPO = DICT_REPO
-        self.script_version = script_version
         self.dict_version = dict_version
+        self.script_version = script_version
         self.start_time = time.time()
         self.args = self.parse_arguments()
         self.line_limit = line_limit
@@ -34,7 +34,7 @@ class ShopLogParser:
         self.cwd = os.path.dirname(__file__)
         self.cache_dir = os.path.join(self.cwd, 'cache')
         self.exports_dir = os.path.join(self.cwd, 'exports')
-        self.dict_dest_dir = os.path.join(self.cwd, 'dictionary')
+        self.dict_dir = os.path.join(self.cwd, 'dictionary')
         self.temppath2 = None # Initialize temppath2
         self.path2 = None     # Initialize path2
         self.ensure_directories()
@@ -201,14 +201,14 @@ class ShopLogParser:
                         version_py = os.path.join(extracted_dir, 'version.py')
 
                         # Copy specific files to destination directories
-                        if not os.path.exists(self.dict_dest_dir):
-                            os.makedirs(self.dict_dest_dir)
+                        if not os.path.exists(self.dict_dir):
+                            os.makedirs(self.dict_dir)
 
                         # Copy Shop-Log-Parser directory
                         if os.path.exists(shop_log_parser_dir):
                             for item in os.listdir(shop_log_parser_dir):
                                 s = os.path.join(shop_log_parser_dir, item)
-                                d = os.path.join(self.dict_dest_dir, item)
+                                d = os.path.join(self.dict_dir, item)
                                 if os.path.isdir(s):
                                     shutil.copytree(s, d, dirs_exist_ok=True)
                                 else:
@@ -216,7 +216,7 @@ class ShopLogParser:
 
                         # Copy version.py
                         if os.path.exists(version_py):
-                            shutil.copy2(version_py, self.dict_dest_dir)
+                            shutil.copy2(version_py, self.dict_dir)
 
                     if repo == self.REPO:
                         if os.path.exists(extracted_dir):
