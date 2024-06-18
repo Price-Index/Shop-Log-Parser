@@ -21,25 +21,25 @@ from metadata import dict_version, script_version, OWNER, REPO, DICT_REPO
 
 class ShopLogParser:
     def __init__(self, line_limit=2000, thousands_separator=','):
+        self.start_time = time.time()
         self.OWNER = OWNER
         self.REPO = REPO
         self.DICT_REPO = DICT_REPO
         self.dict_version = dict_version
         self.script_version = script_version
-        self.start_time = time.time()
-        self.args = self.parse_arguments()
         self.line_limit = line_limit
         self.thousands_separator = thousands_separator
-        self.shop_info = []
         self.cwd = os.path.dirname(__file__)
         self.cache_dir = os.path.join(self.cwd, 'cache')
         self.exports_dir = os.path.join(self.cwd, 'exports')
         self.dict_dir = os.path.join(self.cwd, 'dictionary')
         self.temppath = None
         self.path = None
+        self.shop_info = []
+        self.args = self.parse_arguments()
         self.ensure_directories()
-        self.load_cache_paths()
         self.minecraft_dir = self.determine_minecraft_directory()
+        self.load_cache_paths()
         self.setup_workbook()
         self.run()
 
@@ -81,8 +81,7 @@ class ShopLogParser:
         
         if new_script_version_msg or new_dict_version_msg:
             parser.add_argument('-u', '--update', 
-                                choices=['all', 'dict', 'script'], 
-                                default='all', 
+                                choices=['all', 'dict', 'script'],
                                 help='\033[32mUpdates to a newer version.\033[0m')
 
         parser.add_argument('-p', '--path', type=self.file_path, help='Path to the .minecraft folder (this path will be cached).')
@@ -245,8 +244,8 @@ class ShopLogParser:
 
     def run(self):
         if self.args.update:
-            print('A')
-            self.update(option=self.args.update)
+            print(self.args)
+            # self.update(option=self.args.update)
         else:
             print('B')
             self.parse_shop_logs()
