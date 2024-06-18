@@ -1,1 +1,1 @@
-version = 'vUnknown'
+__version__ = 'vUnknown'
