@@ -131,6 +131,9 @@ class ShopLogParser:
             self.release_cache_path('path_cache.json')
         else:
             self.temppath = self.load_cache_path('temppath_cache.json')
+            temppath_dir = os.path.join(self.cache_dir, 'temppatch_cache.json')
+            if not self.args.temppath and os.path.exists(temppath_dir):
+                os.remove(temppath_dir)
             self.path = self.load_cache_path('path_cache.json')
 
     def save_cache_path(self, path, cache_file):
