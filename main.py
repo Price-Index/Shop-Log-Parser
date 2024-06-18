@@ -38,8 +38,8 @@ class ShopLogParser:
         self.shop_info = []
         self.args = self.parse_arguments()
         self.ensure_directories()
-        self.minecraft_dir = self.determine_minecraft_directory()
         self.load_cache_paths()
+        self.minecraft_dir = self.determine_minecraft_directory()
         self.setup_workbook()
         self.run()
 
@@ -103,6 +103,8 @@ class ShopLogParser:
             return self.args.temppath
         elif self.args.path:
             return self.args.path
+        elif self.temppath:
+            return self.temppath
         elif self.path:
             return self.path
         else:
@@ -129,17 +131,24 @@ class ShopLogParser:
             self.save_cache_path(self.args.temppath, 'temppath_cache.json')
         elif self.args.releasepath:
             self.release_cache_path('path_cache.json')
+            sys.exit(0)
         else:
-            self.temppath = self.load_cache_path('temppath_cache.json')
             temppath_dir = os.path.join(self.cache_dir, 'temppath_cache.json')
-            if not self.args.temppath and os.path.exists(temppath_dir):
-                os.remove(temppath_dir)
-            self.path = self.load_cache_path('path_cache.json')
+            path_dir = os.path.join(self.cache_dir, 'path_cache.json')
+            if os.path.exists(temppath_dir):
+                self.temppath = self.load_cache_path('temppath_cache.json')
+                if not self.args.temppath:
+                    os.remove(temppath_dir)
+            elif os.path.exists(path_dir):
+                self.path = self.load_cache_path('path_cache.json')
 
     def save_cache_path(self, path, cache_file):
         with open(os.path.join(self.cache_dir, cache_file), 'w') as f:
             json.dump({'path': path}, f)
-        print(f'Path saved to cache: {path}')
+        if path == self.args.temppath:
+            print(f'Temppath saved to cache: {path}')
+        else:
+            print(f'Path saved to cache: {path}')
 
     def release_cache_path(self, cache_file):
         cache_file_path = os.path.join(self.cache_dir, cache_file)
