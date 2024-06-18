@@ -246,7 +246,6 @@ class ShopLogParser:
         if self.args.update:
             self.update(option=self.args.update)
         else:
-            print('B')
             self.parse_shop_logs()
             self.save_workbook()
 
