@@ -6,4 +6,4 @@ Copyright (c) [Vox314](https://github.com/Vox314) and [32294](https://github.com
 """
 
 from .metadata import script_version, OWNER, REPO, DICT_REPO
-from dictionary.version import version as dict_version
+from dictionary.version import __version__ as dict_version
