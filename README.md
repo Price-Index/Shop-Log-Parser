@@ -10,14 +10,14 @@ This is the Repository containing the [Shop Log parser](/docs/SHOPLOGPARSER.md) 
 You can also visit the [Developer Updates](https://github.com/Price-Index/.github/blob/main/profile/UPDATES.md) to find up to date information.
 
 > [!TIP]
-> [v2.0.0-alpha](https://github.com/Price-Index/Shop-Log-Parser/releases/tag/v2.0.0-alpha) is now available!
+> [v1.0.2](https://github.com/Price-Index/Shop-Log-Parser/releases/tag/v1.0.2) is now available!
 
 > [!CAUTION]
 > This tool may contain bugs, if you do find some, please notify [@thevoxy](https://discordapp.com/users/967391331553013811) on discord.
 
 - [Shop Log Parser](/docs/SHOPLOGPARSER.md) _<-- Click here to go to the Documentation!_
 
----
+--- 
 
 ## Getting Started
 

@@ -35,8 +35,8 @@ class ShopLogParser:
         self.cache_dir = os.path.join(self.cwd, 'cache')
         self.exports_dir = os.path.join(self.cwd, 'exports')
         self.dict_dir = os.path.join(self.cwd, 'dictionary')
-        self.temppath2 = None # Initialize temppath2
-        self.path2 = None     # Initialize path2
+        self.temppath = None # Initialize temppath
+        self.path = None     # Initialize path
         self.ensure_directories()
         self.load_cache_paths() # Load cache paths before determining the Minecraft directory
         self.minecraft_dir = self.determine_minecraft_directory()
@@ -106,10 +106,10 @@ class ShopLogParser:
     def determine_minecraft_directory(self):
         if self.args.path:
             return self.args.path
-        elif self.temppath2:
-            return self.temppath2
-        elif self.path2:
-            return self.path2
+        elif self.temppath:
+            return self.temppath
+        elif self.path:
+            return self.path
         else:
             if os.name == 'nt':
                 return os.path.join(os.environ['APPDATA'], '.minecraft')
@@ -127,9 +127,9 @@ class ShopLogParser:
         self.ws_sql = self.wb_sql.active
         self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost'])
 
-    def load_cache_paths(self): # TODO: some kind of issue with temppath not going away? Also why temppath2??!
-        self.path2 = None
-        self.temppath2 = None
+    def load_cache_paths(self): # TODO: some kind of issue with temppath not going away? Also why temppath??!
+        self.path = None
+        self.temppath = None
         if self.args.path:
             self.save_cache_path(self.args.path, 'path_cache.json')
         elif self.args.temppath:
@@ -137,8 +137,8 @@ class ShopLogParser:
         elif self.args.releasepath:
             self.release_cache_path('path_cache.json')
         else:
-            self.temppath2 = self.load_cache_path('temppath_cache.json')
-            self.path2 = self.load_cache_path('path_cache.json')
+            self.temppath = self.load_cache_path('temppath_cache.json')
+            self.path = self.load_cache_path('path_cache.json')
 
     def save_cache_path(self, path, cache_file):
         with open(os.path.join(self.cache_dir, cache_file), 'w') as f:
