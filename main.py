@@ -156,7 +156,7 @@ class ShopLogParser:
         if os.path.isdir(string):
             return string
         else:
-            raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the --help arg.")
+            raise FileNotFoundError(f"{string}\nThis Error may appear if you are using an unofficial minecraft launcher.\nPlease run the file using the '--help' arg.")
 
     def update(self, option):
         print("Updating...")
