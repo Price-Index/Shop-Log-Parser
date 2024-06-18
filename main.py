@@ -244,8 +244,7 @@ class ShopLogParser:
 
     def run(self):
         if self.args.update:
-            print(self.args)
-            # self.update(option=self.args.update)
+            self.update(option=self.args.update)
         else:
             print('B')
             self.parse_shop_logs()
