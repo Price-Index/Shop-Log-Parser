@@ -35,10 +35,10 @@ class ShopLogParser:
         self.cache_dir = os.path.join(self.cwd, 'cache')
         self.exports_dir = os.path.join(self.cwd, 'exports')
         self.dict_dir = os.path.join(self.cwd, 'dictionary')
-        self.temppath = None # Initialize temppath
-        self.path = None     # Initialize path
+        self.temppath = None
+        self.path = None
         self.ensure_directories()
-        self.load_cache_paths() # Load cache paths before determining the Minecraft directory
+        self.load_cache_paths()
         self.minecraft_dir = self.determine_minecraft_directory()
         self.setup_workbook()
         self.run()
@@ -47,12 +47,8 @@ class ShopLogParser:
         """
         Fetches the latest release tag from the GitHub API.
         """
-
-        # token = 'abcdefg' # Include personal access token if you get rate limited by the GitHub REST API
-
         headers = {
             'Accept': 'application/vnd.github+json',
-            # 'Authorization': f'token {token}'
         }
         url = f'https://api.github.com/repos/{owner}/{repo}/releases/latest'
         try:
@@ -104,10 +100,10 @@ class ShopLogParser:
         os.makedirs(self.exports_dir, exist_ok=True)
 
     def determine_minecraft_directory(self):
-        if self.args.path:
+        if self.args.temppath:
+            return self.args.temppath
+        elif self.args.path:
             return self.args.path
-        elif self.temppath:
-            return self.temppath
         elif self.path:
             return self.path
         else:
@@ -127,9 +123,7 @@ class ShopLogParser:
         self.ws_sql = self.wb_sql.active
         self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost'])
 
-    def load_cache_paths(self): # TODO: some kind of issue with temppath not going away? Also why temppath??!
-        self.path = None
-        self.temppath = None
+    def load_cache_paths(self):
         if self.args.path:
             self.save_cache_path(self.args.path, 'path_cache.json')
         elif self.args.temppath:
@@ -251,8 +245,10 @@ class ShopLogParser:
 
     def run(self):
         if self.args.update:
+            print('A')
             self.update(option=self.args.update)
         else:
+            print('B')
             self.parse_shop_logs()
             self.save_workbook()
 
