@@ -168,16 +168,13 @@ class ShopLogParser:
                 latest_release = response.json()
                 zipball_url = latest_release['zipball_url']
 
-                # Create a temporary directory
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     zip_path = os.path.join(tmpdirname, 'latest_release.zip')
 
-                    # Download the zip file
                     with open(zip_path, 'wb') as f:
                         for chunk in requests.get(zipball_url, stream=True).iter_content(chunk_size=8192):
                             f.write(chunk)
 
-                    # Extract the zip file
                     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                         zip_ref.extractall(tmpdirname)
 
