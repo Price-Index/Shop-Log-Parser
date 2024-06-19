@@ -20,13 +20,32 @@ from decimal import Decimal
 from metadata import dict_version, script_version, OWNER, REPO, DICT_REPO
 
 class ShopLogParser:
-    def __init__(self, line_limit=2000, thousands_separator=','):
+    def __init__(
+            self,
+            dict_pages = [
+               'enchanted_books.json',
+               'potions.json',
+               'splash_potions.json',
+               'lingering_potions.json',
+               'tipped_arrows.json',
+               'heads.json',
+               'fireworks.json'
+            ],
+            bukkit_pages = [
+                'bukkit_enchantments.json'
+            ],
+            line_limit=2000,
+            thousands_separator=','
+        ):
+
         self.start_time = time.time()
         self.OWNER = OWNER
         self.REPO = REPO
         self.DICT_REPO = DICT_REPO
         self.dict_version = dict_version
         self.script_version = script_version
+        self.dict_pages = dict_pages
+        self.bukkit_pages = bukkit_pages
         self.line_limit = line_limit
         self.thousands_separator = thousands_separator
         self.cwd = os.path.dirname(__file__)
@@ -277,6 +296,8 @@ class ShopLogParser:
                 stock = self.extract_stock(line)
                 item = self.extract_item(line)
                 item = self.resolve_item_name(item)
+                bukkit_enchant = self.extract_bukkit_enchants(lines, i)
+                vanilla_enchant = self.resolve_vanilla_enchants(bukkit_enchant)
                 repair_cost = self.extract_repair_costs(lines, i)
                 buy, sell = self.extract_prices(lines, i)
 
@@ -292,14 +313,29 @@ class ShopLogParser:
 
     def extract_item(self, line):
         return line.split('Item: ')[1].split('\n')[0]
+    
+    def load_dictionary(self, bukkit: bool = False):
 
-    def resolve_item_name(self, item): # TODO: work here
-        dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json', 'fireworks.json']
-        index_dictionary = {}
-        for file_name in dict_pages:
-            with open(os.path.join('dictionary', file_name), 'r') as file:
-                data = json.load(file)
-                index_dictionary.update(data)
+        if bukkit == False:
+            index_dictionary = {}
+            for file_name in self.dict_pages:
+                with open(os.path.join('dictionary', file_name), 'r') as file:
+                    data = json.load(file)
+                    index_dictionary.update(data)
+
+                    return index_dictionary
+
+        elif bukkit == True:
+            bukkit_dictionary = {}
+            for file_name in self.bukkit_pages:
+                with open(os.path.join('dictionary', file_name), 'r') as file:
+                    data = json.load(file)
+                    bukkit_dictionary.update(data)
+
+                    return bukkit_dictionary
+
+    def resolve_item_name(self, item):
+        index_dictionary = self.load_dictionary()
 
         if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
             return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
@@ -310,6 +346,42 @@ class ShopLogParser:
     
     def extract_stock(self, line):
         return line.split('Stock: ')[1].split('\\n')[0]
+    
+    def extract_bukkit_enchants(self, lines, i):
+        bukkit_dictionary = self.load_dictionary(bukkit=True)
+        bukkit_enchant = []
+
+        # Search for bukit enchants
+        for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
+            if '[CHAT] Shop Information:' in lines[j]:
+                break
+            # Iterate over keys in bukkit_dictionary
+            for key in bukkit_dictionary:
+                if f'[CHAT] {key}' in lines[j]:
+                    
+                    # append to lines[j] if you wish to get more debugging info
+                    bukkit_enchant.append(key)
+                    break
+        
+        return bukkit_enchant
+
+    def resolve_vanilla_enchants(self, bukkit_enchant):
+        bukkit_dictionary = self.load_dictionary(bukkit=True)
+        vanilla_enchants = []
+
+        for enchant in bukkit_enchant:
+            if enchant in bukkit_dictionary:
+                vanilla_enchant = bukkit_dictionary[enchant]
+                vanilla_enchants.append(vanilla_enchant)
+
+        # Format the output as a JSON object
+        enchants_json = {
+            "enchants": vanilla_enchants
+        }
+
+        print(enchants_json)
+        return enchants_json
+
     
     def extract_repair_costs(self, lines, i):
         repair_cost = 0
