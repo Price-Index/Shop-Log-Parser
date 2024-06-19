@@ -355,17 +355,21 @@ class ShopLogParser:
         bukkit_dictionary = self.load_dictionary(bukkit=True)
         bukkit_enchant = []
 
-        # Search for bukit enchants
+        # Search for bukkit enchants
         for j in range(i + 1, min(i + self.line_limit + 1, len(lines))):
             if '[CHAT] Shop Information:' in lines[j]:
                 break
-            # Iterate over keys in bukkit_dictionary
+            # Iterate over sorted keys in bukkit_dictionary
             for key in bukkit_dictionary:
-                if f'[CHAT] {key}' in lines[j]:
-                    
-                    # append to lines[j] if you wish to get more debugging info
-                    bukkit_enchant.append(key)
-                    break
+                search_str = f'[CHAT] {key}'
+                pos = lines[j].find(search_str)
+                if pos != -1:
+                    # Check that the character following the match is either end of string or non-alphanumeric
+                    end_pos = pos + len(search_str)
+                    if end_pos == len(lines[j]) or not lines[j][end_pos].isalnum():
+                        # append to lines[j] if you wish to get more debugging info
+                        bukkit_enchant.append(key)
+                        break
 
         return bukkit_enchant
 
