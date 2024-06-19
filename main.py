@@ -309,6 +309,7 @@ class ShopLogParser:
 
                     # Append detailed dictionary to shop_info in order to prevent duplicates
                     self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell, 'stock': stock, 'repair_cost': repair_cost, 'enchants': enchants})
+                    # TODO: Maybe make this some kind of data field instead of `enchant`, so that items dont need to have potion xyz in them, but the actual type is shown in that data field
                     
 
     def extract_item(self, line):
@@ -336,8 +337,8 @@ class ShopLogParser:
 
     def resolve_item_name(self, item):
         index_dictionary = self.load_dictionary()
-
-        if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
+                            # 'Enchanted Book#' Enchanted books are deprecated as of v2.0.0
+        if item.startswith(('Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
             return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
         elif '#' in item:
             item = item.rpartition('#')[0]
