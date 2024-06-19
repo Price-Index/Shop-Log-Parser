@@ -141,7 +141,7 @@ class ShopLogParser:
         self.ws = self.wb.active
         self.wb_sql = Workbook()
         self.ws_sql = self.wb_sql.active
-        self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost'])
+        self.ws.append(['Item', 'Price', 'Price Type', 'Owner', 'Stock', 'Repair Cost', 'Enchants'])
 
     def load_cache_paths(self):
         if self.args.path:
@@ -297,18 +297,18 @@ class ShopLogParser:
                 item = self.extract_item(line)
                 item = self.resolve_item_name(item)
                 bukkit_enchant = self.extract_bukkit_enchants(lines, i)
-                vanilla_enchant = self.resolve_vanilla_enchants(bukkit_enchant)
+                enchants = self.resolve_vanilla_enchants(bukkit_enchant)
                 repair_cost = self.extract_repair_costs(lines, i)
                 buy, sell = self.extract_prices(lines, i)
 
-                if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell and info['stock'] == stock and info['repair_cost'] == repair_cost for info in self.shop_info):
+                if not any(info['item'] == item and info['owner'] == owner and info['buy'] == buy and info['sell'] == sell and info['stock'] == stock and info['repair_cost'] == repair_cost and info['enchants'] == enchants for info in self.shop_info):
                     if buy is not None:
-                        self.ws.append([item, buy, "B", owner, stock, repair_cost])
+                        self.ws.append([item, buy, "B", owner, stock, repair_cost, enchants])
                     if sell is not None:
-                        self.ws.append([item, sell, "S", owner, stock, repair_cost])
+                        self.ws.append([item, sell, "S", owner, stock, repair_cost, enchants])
 
                     # Append detailed dictionary to shop_info in order to prevent duplicates
-                    self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell, 'stock': stock, 'repair_cost': repair_cost})
+                    self.shop_info.append({'item': item, 'owner': owner, 'buy': buy, 'sell': sell, 'stock': stock, 'repair_cost': repair_cost, 'enchants': enchants})
                     
 
     def extract_item(self, line):
@@ -339,7 +339,11 @@ class ShopLogParser:
 
         if item.startswith(('Enchanted Book#', 'Potion#', 'Splash Potion#', 'Lingering Potion#', 'Tipped Arrow#', 'Player Head#', 'Firework Rocket#')):
             return index_dictionary.get(item, f'ERROR Unknown {item.split("#")[0]}: {item}')
-        return item
+        elif '#' in item:
+            item = item.rpartition('#')[0]
+            return item
+        else:
+            return item
 
     def extract_owner(self, line):
         return line.split('Owner: ')[1].split('\\n')[0]
@@ -362,7 +366,7 @@ class ShopLogParser:
                     # append to lines[j] if you wish to get more debugging info
                     bukkit_enchant.append(key)
                     break
-        
+
         return bukkit_enchant
 
     def resolve_vanilla_enchants(self, bukkit_enchant):
@@ -379,8 +383,7 @@ class ShopLogParser:
             "enchants": vanilla_enchants
         }
 
-        print(enchants_json)
-        return enchants_json
+        return str(enchants_json)
 
     
     def extract_repair_costs(self, lines, i):
