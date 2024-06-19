@@ -200,21 +200,24 @@ class ShopLogParser:
                     if repo == self.DICT_REPO:
                         # Define paths to specific files to be copied
                         shop_log_parser_dir = os.path.join(extracted_dir, 'Shop-Log-Parser')
+                        bukkit_enchantments_path = os.path.join(extracted_dir, 'Bukkit-Enchantments')
                         version_py = os.path.join(extracted_dir, 'version.py')
 
                         # Copy specific files to destination directories
                         if not os.path.exists(self.dict_dir):
                             os.makedirs(self.dict_dir)
 
-                        # Copy Shop-Log-Parser directory
-                        if os.path.exists(shop_log_parser_dir):
-                            for item in os.listdir(shop_log_parser_dir):
-                                s = os.path.join(shop_log_parser_dir, item)
-                                d = os.path.join(self.dict_dir, item)
-                                if os.path.isdir(s):
-                                    shutil.copytree(s, d, dirs_exist_ok=True)
-                                else:
-                                    shutil.copy2(s, d)
+                        # Create a list of directories and files to be copied
+                        files_and_dirs_to_copy = [shop_log_parser_dir, bukkit_enchantments_path, version_py]
+
+                        for item in files_and_dirs_to_copy:
+                            s = os.path.join(item)
+                            d = self.dict_dir
+
+                            if os.path.isdir(s):
+                                shutil.copytree(s, os.path.join(d), dirs_exist_ok=True)
+                            else:
+                                shutil.copy2(s, d)
 
                         # Copy version.py
                         if os.path.exists(version_py):
@@ -290,7 +293,7 @@ class ShopLogParser:
     def extract_item(self, line):
         return line.split('Item: ')[1].split('\n')[0]
 
-    def resolve_item_name(self, item):
+    def resolve_item_name(self, item): # TODO: work here
         dict_pages = ['enchanted_books.json', 'potions.json', 'splash_potions.json', 'lingering_potions.json', 'tipped_arrows.json', 'heads.json', 'fireworks.json']
         index_dictionary = {}
         for file_name in dict_pages:
