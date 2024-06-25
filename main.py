@@ -387,7 +387,11 @@ class ShopLogParser:
             "enchants": vanilla_enchants
         }
 
-        return str(enchants_json)
+        # Return the JSON, or None
+        if vanilla_enchants == []:
+            return None
+        else:
+            return str(enchants_json)
 
     
     def extract_repair_costs(self, lines, i):
