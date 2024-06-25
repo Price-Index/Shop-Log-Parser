@@ -43,7 +43,7 @@ GitHub Page --> [Shop-Log-Parser](https://github.com/Price-Index/Shop-Log-Parser
 """
 
 ### NEEDS TO KEEP UPDATING
-script_version = 'v2.0.0-beta'
+script_version = 'v2.0.0'
 
 """
 ## Software version
