@@ -452,10 +452,14 @@ class ShopLogParser:
     def save_workbook(self):
         date = datetime.datetime.now().strftime("%Y-%m-%d %H-%M-%S")
         file_path = os.path.join(self.exports_dir, f'shop_information {date}.xlsx')
-        self.wb.save(file_path)
         latest_file_path = os.path.join(self.exports_dir, f'latest shop_information.xlsx')
-        self.wb.save(latest_file_path)
-        print(f'Elapsed Time: {(time.time() - self.start_time)*1000:.2f}ms')
+        try:
+            self.wb.save(file_path)
+            self.wb.save(latest_file_path)
+            print(f'Elapsed Time: {(time.time() - self.start_time)*1000:.2f}ms')
+        except PermissionError as e:
+            print(f"An error occurred: {e},\nplease close the open excel file(s)")
+            sys.exit(1)
 
 if __name__ == "__main__":
     ShopLogParser()
