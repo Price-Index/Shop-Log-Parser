@@ -286,6 +286,7 @@ class ShopLogParser:
                 self.process_log_lines(lines)
         except FileNotFoundError as e:
             print(f"An error occurred: {e},\nplease install the dictionary using '--update dict'")
+            sys.exit(1)
 
     def process_log_lines(self, lines):
         for i, line in enumerate(lines):
